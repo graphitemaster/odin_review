@@ -174,7 +174,7 @@ typedef int BOOL;
 typedef BYTE BOOLEAN;
 ```
 
-Reading the result of a function which returns a single byte as a four byte integer casted to `bool` in Odin was incorrectly evaluating to `true` because those bytes are largely undefined and can contain anything and anything but a value of 0 is `true`. The lock was never acquired, even though it said it was. These three extra characters on the prototype, three extra bytes (in both cases) ended up being the issue. This was promptly [fixed](https://github.com/odin-lang/Odin/commit/7fe36de069520a0567d02b351cfd0514d83aa0c6).
+Reading the result of a function which returns a single byte as a four byte integer casted to `bool` in Odin was incorrectly evaluating to `true` because those bytes are largely undefined and can contain anything and anything but a value of 0 is `true`. The lock was never acquired, even though it said it was! These three extra characters on the prototype, three extra bytes (in both cases) ended up being the issue. The relief felt after finding this was immense. I wouldn't wish such pain on even my worst enemy. Thankfully for others, they shouldn't need to run into this as it was promptly [fixed](https://github.com/odin-lang/Odin/commit/7fe36de069520a0567d02b351cfd0514d83aa0c6).
 
 Do not let this horror story keep you from trying out Odin, new languages and early adopters always bare the most pain. That is a genuinely easy mistake anyone could've made. I was surprised to learn that `BOOL` and `BOOLEAN` are different in representation too, what a horrible choice made by Microsoft to introduce such confusion into function boundaries too.
 
