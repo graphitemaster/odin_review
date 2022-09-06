@@ -6,11 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A review of the Odin programming language # Written by Dale Weiler
 Twitter GitHub Last updated Tuesday, September 6th, 2022
-What is Odin Experience Conflict of interest Financial interest Relational interest Learning Slices Hidden reference semantics Hidden dereference semantics Hidden memory allocations Memory allocation confusion Quality of life Stability Performance Debugging Compilation performance Personal opinion Packages Imports Procedure groups Final remarks What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon.">
+What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Odin programming language review" />
 <meta property="og:description" content="A review of the Odin programming language # Written by Dale Weiler
 Twitter GitHub Last updated Tuesday, September 6th, 2022
-What is Odin Experience Conflict of interest Financial interest Relational interest Learning Slices Hidden reference semantics Hidden dereference semantics Hidden memory allocations Memory allocation confusion Quality of life Stability Performance Debugging Compilation performance Personal opinion Packages Imports Procedure groups Final remarks What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon." />
+What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://graphitemaster.github.io/odin_review/" /><meta property="article:section" content="" />
 
@@ -120,6 +120,11 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#quality-of-life">Quality of life</a></li>
     <li><a href="#stability">Stability</a></li>
+    <li><a href="#correctness">Correctness</a>
+      <ul>
+        <li><a href="#the-bug-that-almost-killed-me">The bug that almost killed me</a></li>
+      </ul>
+    </li>
     <li><a href="#performance">Performance</a></li>
     <li><a href="#debugging">Debugging</a></li>
     <li><a href="#compilation-performance">Compilation performance</a></li>
@@ -154,59 +159,6 @@ https://github.com/alex-shpak/hugo-book
   <a href="https://github.com/graphitemaster">GitHub</a></li>
 </ul>
 <p>Last updated Tuesday, September 6th, 2022</p>
-<ul>
-<li>
-  <a href="/odin_review/#what-is-odin">What is Odin</a></li>
-<li>
-  <a href="/odin_review/#experience">Experience</a></li>
-<li>
-  <a href="/odin_review/#conflict-of-interest">Conflict of interest</a>
-<ul>
-<li>
-  <a href="/odin_review/#financial-interest">Financial interest</a></li>
-<li>
-  <a href="/odin_review/#relational-interest">Relational interest</a></li>
-</ul>
-</li>
-<li>
-  <a href="/odin_review/#learning">Learning</a>
-<ul>
-<li>
-  <a href="/odin_review/#slices">Slices</a></li>
-<li>
-  <a href="/odin_review/#hidden-reference-semantics">Hidden reference semantics</a></li>
-<li>
-  <a href="/odin_review/#hidden-dereference-semantics">Hidden dereference semantics</a></li>
-<li>
-  <a href="/odin_review/#hidden-memory-allocations">Hidden memory allocations</a></li>
-<li>
-  <a href="/odin_review/#memory-allocation-confusion">Memory allocation confusion</a></li>
-</ul>
-</li>
-<li>
-  <a href="/odin_review/#quality-of-life">Quality of life</a></li>
-<li>
-  <a href="/odin_review/#stability">Stability</a></li>
-<li>
-  <a href="/odin_review/#performance">Performance</a></li>
-<li>
-  <a href="/odin_review/#debugging">Debugging</a></li>
-<li>
-  <a href="/odin_review/#compilation-performance">Compilation performance</a></li>
-<li>
-  <a href="/odin_review/#personal-opinion">Personal opinion</a>
-<ul>
-<li>
-  <a href="/odin_review/#packages">Packages</a></li>
-<li>
-  <a href="/odin_review/#imports">Imports</a></li>
-<li>
-  <a href="/odin_review/#procedure-groups">Procedure groups</a></li>
-</ul>
-</li>
-<li>
-  <a href="/odin_review/#final-remarks">Final remarks</a></li>
-</ul>
 <h2 id="what-is-odin">
   What is Odin
   <a class="anchor" href="#what-is-odin">#</a>
@@ -357,6 +309,45 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#stability">#</a>
 </h2>
 <p>When I first started writing Odin I found the compiler would crash often. After personally debugging the compiler it became evident that the threaded type checker had various data races which only seemed to occur on my 32-thread CPU. These are now fixed and I can confidently say that the Odin compiler has been relatively stable in my year using it. It should be noted that sometimes I&rsquo;ve run into internal compiler errors or LLVM code generation errors when using more rare and exotic constructs in the language that don&rsquo;t see much usage or testing, but every time I&rsquo;ve encountered them they&rsquo;ve been easy to work around or fixed pretty much immediately when an issue was opened on the Odin GitHub.</p>
+<h2 id="correctness">
+  Correctness
+  <a class="anchor" href="#correctness">#</a>
+</h2>
+<p>The danger of using new languages is not having all the years of bug fixes and improvements applied to them. The Odin compiler has been quite good at being correct with code correctness from a compilation stand point. During my year using it I had only run into a single logical miscompilation bug caused by a <code>defer</code> statement which wasn&rsquo;t being executed when the procedure returned. Thankfully this bug was fixed the same day I report it and I didn&rsquo;t lose much time tracking it down.</p>
+<h3 id="the-bug-that-almost-killed-me">
+  The bug that almost killed me
+  <a class="anchor" href="#the-bug-that-almost-killed-me">#</a>
+</h3>
+<p>If that was the the only correctness issue I ran into this wouldn&rsquo;t necessitate having an entire header in this review for correctness though. There was one other correctness issue within the standard library that almost killed me. To give some context to the issue, we have a reactor system (a multi-threaded event loop) I had written for performing blocking IO operations and asset decompression / deserialization on without stalling the main thread which we were experiencing strange memory corruption issues on. I suspected this was caused by your standard data-race by a misuse of synchronization primitives. There was some red-herring robustness issues with locks I noticed early on that shouldn&rsquo;t&rsquo;ve mattered but because I couldn&rsquo;t figure out what the issue was I rewrote the event loop model a few times, reducing some lock contention and improving robustness in process and the issue went away for me on Linux completely. This suggested that there was a data-race in the reactor which I later confirmed was the case but didn&rsquo;t know at the time. What was more concerning was that heap corruption was still happening on Windows. This is where I went down the wrong road of assuming that the reactor had data races and I spent the next two weeks replacing all the locking primitives with ones in libc (made possible because Odin has a full projection of the C standard library in <code>core:c/libc</code>) and painstakingly testing every possible code path in <code>helgrind</code> (since it can track libc primitives). It reported nothing. I even hand drew a time-line graph with order-before and order-after relationship of all locks and I concluded that the reactor was correct. I ignored this issue at this point since it was consuming up all my time and making me lose sleep at night, I focused my efforts on other important matters, after all the issue wasn&rsquo;t happening for me on Linux at all, it was exclusively a Windows problem.</p>
+<p>I&rsquo;m the only person at JangaFX as of current who develops and mains Linux so this wasn&rsquo;t a sound strategy because the week after a coworker starts hitting the problem on Windows leading us to look into it again. This time with a refreshed mind and the confidence it wasn&rsquo;t an issue in my code I suspected the Odin standard library. The way synchronization primitives are implemented on Linux are through the use of the <code>futex</code> system call and we already knew that Linux worked. I had assumed that Windows primitives would&rsquo;ve used <code>WaitOnAddress</code> and <code>WakeOnAddress</code> which is similar to <code>futex</code> but to my surprise Odin implements the <code>Mutex</code> primitive with 
+  <a href="https://docs.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks">Slim Reader/Writer Locks (SRW)</a> on Windows.</p>
+<p>These are impossible to get wrong and looked perfectly correct, here&rsquo;s the full implementation.</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">_Mutex :: struct {
+	srwlock: win32.SRWLOCK,
+}
+_mutex_lock :: proc(m: ^Mutex) {
+	win32.AcquireSRWLockExclusive(&amp;m.impl.srwlock)
+}
+_mutex_unlock :: proc(m: ^Mutex) {
+	win32.ReleaseSRWLockExclusive(&amp;m.impl.srwlock)
+}
+_mutex_try_lock :: proc(m: ^Mutex) -&gt; bool {
+	return bool(win32.TryAcquireSRWLockExclusive(&amp;m.impl.srwlock))
+}
+</code></pre><p>I thought long and hard about how this could possibly fail. Looking back at the reactor code the only way memory corruption could occur is if <code>mutex_try_lock</code> succeeded without actually locking the mutex.</p>
+<p>Looking at the Windows package which declares the <code>TryAcquireSRWLockExclusive</code> procedure we saw the following.</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">TryAcquireSRWLockExclusive :: proc(SRWLock: ^SRWLOCK) -&gt; BOOL
+</code></pre><p>This looked perfectly reasonably, until a corworker looked at the 
+  <a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-tryacquiresrwlockexclusive">MSDN page</a> for it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>BOOLEAN <span style="color:#a6e22e">TryAcquireSRWLockExclusive</span>(
+</span></span><span style="display:flex;"><span>  [in, out] PSRWLOCK SRWLock
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>At this point you should be asking yourself if there is any difference between <code>BOOL</code> and <code>BOOLEAN</code>. To save you the effort here&rsquo;s how Windows defines them.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">int</span> BOOL;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> BYTE BOOLEAN;
+</span></span></code></pre></div><p>Reading the result of a function which returns a single byte as a four byte integer casted to <code>bool</code> in Odin was incorrectly evaluating to <code>true</code> because those bytes are largely undefined and can contain anything and anything but a value of 0 is <code>true</code>. The lock was never acquired, even though it said it was. These three extra characters on the prototype, three extra bytes (in both cases) ended up being the issue. This was promptly 
+  <a href="https://github.com/odin-lang/Odin/commit/7fe36de069520a0567d02b351cfd0514d83aa0c6">fixed</a>.</p>
+<p>Do not let this horror story keep you from trying out Odin, new languages and early adopters always bare the most pain. That is a genuinely easy mistake anyone could&rsquo;ve made. I was surprised to learn that <code>BOOL</code> and <code>BOOLEAN</code> are different in representation too, what a horrible choice made by Microsoft to introduce such confusion into function boundaries too.</p>
 <h2 id="performance">
   Performance
   <a class="anchor" href="#performance">#</a>
@@ -497,6 +488,11 @@ https://github.com/alex-shpak/hugo-book
     </li>
     <li><a href="#quality-of-life">Quality of life</a></li>
     <li><a href="#stability">Stability</a></li>
+    <li><a href="#correctness">Correctness</a>
+      <ul>
+        <li><a href="#the-bug-that-almost-killed-me">The bug that almost killed me</a></li>
+      </ul>
+    </li>
     <li><a href="#performance">Performance</a></li>
     <li><a href="#debugging">Debugging</a></li>
     <li><a href="#compilation-performance">Compilation performance</a></li>
