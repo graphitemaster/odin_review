@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Almost Always Unsigned</title>
+    <link>https://graphitemaster.github.io/aau/</link>
+    <description>Recent content on Almost Always Unsigned</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://graphitemaster.github.io/aau/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Almost Always Unsigned</title>
+      <link>https://graphitemaster.github.io/aau/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://graphitemaster.github.io/aau/</guid>
+      <description>Almost Always Unsigned #  Written by Dale Weiler
+  Twitter  GitHub  Last updated Saturday, January 1, 2022
+The need for signed integer arithmetic is often misplaced as most integers never represent negative values within a program. The indexing of arrays and iteration count of a loop reflects this concept as well. There should be a propensity to use unsigned integers more often than signed, yet despite this, most code incorrectly choses to use signed integers almost exclusively.</description>
+    </item>
+    
+  </channel>
+</rss>
