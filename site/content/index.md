@@ -12,28 +12,6 @@ Written by Dale Weiler
 
 Last updated Tuesday, September 6th, 2022
 
-- [What is Odin](#what-is-odin)
-- [Experience](#experience)
-- [Conflict of interest](#conflict-of-interest)
-  * [Financial interest](#financial-interest)
-  * [Relational interest](#relational-interest)
-- [Learning](#learning)
-  * [Slices](#slices)
-  * [Hidden reference semantics](#hidden-reference-semantics)
-  * [Hidden dereference semantics](#hidden-dereference-semantics)
-  * [Hidden memory allocations](#hidden-memory-allocations)
-  * [Memory allocation confusion](#memory-allocation-confusion)
-- [Quality of life](#quality-of-life)
-- [Stability](#stability)
-- [Performance](#performance)
-- [Debugging](#debugging)
-- [Compilation performance](#compilation-performance)
-- [Personal opinion](#personal-opinion)
-  * [Packages](#packages)
-  * [Imports](#imports)
-  * [Procedure groups](#procedure-groups)
-- [Final remarks](#final-remarks)
-
 ## What is Odin
 For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C. This makes it a really attractive language for those who are unhappy with the increased complexity that other systems languages like to encourage.
 
@@ -85,7 +63,6 @@ Almost nothing in Odin will perform a hidden memory allocation on you. This is a
 Odin has two idiomatic ways to allocate memory. The `make` and `new` procedures. When destroying something created with `make` you call `delete`. When destroying something created with `new` you call `free`. This is a bit confusing if you come from C++ where `new` is paired with `delete`. I found myself making this mistake endlessly due to muscle memory. I suspect if I ever go back to writing C++ I'll find myself making the opposite mistake now.
 
 One should be cognizant of the muscle memory one develops while working in programming languages and how it can become a barrier to learning others and how it can introduce subtle mistakes as well.
-
 
 ## Quality of life
 The immediate benefit to using Odin over C and C++ is that it provides a bunch of obvious needed quality of life improvements that benefit the type of work I was already doing as an systems developer.
@@ -152,6 +129,54 @@ What was less obvious and I did not expect while writing Odin was how miserable 
 
 ## Stability
 When I first started writing Odin I found the compiler would crash often. After personally debugging the compiler it became evident that the threaded type checker had various data races which only seemed to occur on my 32-thread CPU. These are now fixed and I can confidently say that the Odin compiler has been relatively stable in my year using it. It should be noted that sometimes I've run into internal compiler errors or LLVM code generation errors when using more rare and exotic constructs in the language that don't see much usage or testing, but every time I've encountered them they've been easy to work around or fixed pretty much immediately when an issue was opened on the Odin GitHub.
+
+## Correctness
+The danger of using new languages is not having all the years of bug fixes and improvements applied to them. The Odin compiler has been quite good at being correct with code correctness from a compilation stand point. During my year using it I had only run into a single logical miscompilation bug caused by a `defer` statement which wasn't being executed when the procedure returned. Thankfully this bug was fixed the same day I report it and I didn't lose much time tracking it down.
+
+### The bug that almost killed me
+If that was the the only correctness issue I ran into this wouldn't necessitate having an entire header in this review for correctness though. There was one other correctness issue within the standard library that almost killed me. To give some context to the issue, we have a reactor system (a multi-threaded event loop) I had written for performing blocking IO operations and asset decompression / deserialization on without stalling the main thread which we were experiencing strange memory corruption issues on. I suspected this was caused by your standard data-race by a misuse of synchronization primitives. There was some red-herring robustness issues with locks I noticed early on that shouldn't've mattered but because I couldn't figure out what the issue was I rewrote the event loop model a few times, reducing some lock contention and improving robustness in process and the issue went away for me on Linux completely. This suggested that there was a data-race in the reactor which I later confirmed was the case but didn't know at the time. What was more concerning was that heap corruption was still happening on Windows. This is where I went down the wrong road of assuming that the reactor had data races and I spent the next two weeks replacing all the locking primitives with ones in libc (made possible because Odin has a full projection of the C standard library in `core:c/libc`) and painstakingly testing every possible code path in `helgrind` (since it can track libc primitives). It reported nothing. I even hand drew a time-line graph with order-before and order-after relationship of all locks and I concluded that the reactor was correct. I ignored this issue at this point since it was consuming up all my time and making me lose sleep at night, I focused my efforts on other important matters, after all the issue wasn't happening for me on Linux at all, it was exclusively a Windows problem.
+
+I'm the only person at JangaFX as of current who develops and mains Linux so this wasn't a sound strategy because the week after a coworker starts hitting the problem on Windows leading us to look into it again. This time with a refreshed mind and the confidence it wasn't an issue in my code I suspected the Odin standard library. The way synchronization primitives are implemented on Linux are through the use of the `futex` system call and we already knew that Linux worked. I had assumed that Windows primitives would've used `WaitOnAddress` and `WakeOnAddress` which is similar to `futex` but to my surprise Odin implements the `Mutex` primitive with [Slim Reader/Writer Locks (SRW)](https://docs.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks) on Windows.
+
+These are impossible to get wrong and looked perfectly correct, here's the full implementation.
+```odin
+_Mutex :: struct {
+	srwlock: win32.SRWLOCK,
+}
+_mutex_lock :: proc(m: ^Mutex) {
+	win32.AcquireSRWLockExclusive(&m.impl.srwlock)
+}
+_mutex_unlock :: proc(m: ^Mutex) {
+	win32.ReleaseSRWLockExclusive(&m.impl.srwlock)
+}
+_mutex_try_lock :: proc(m: ^Mutex) -> bool {
+	return bool(win32.TryAcquireSRWLockExclusive(&m.impl.srwlock))
+}
+```
+
+I thought long and hard about how this could possibly fail. Looking back at the reactor code the only way memory corruption could occur is if `mutex_try_lock` succeeded without actually locking the mutex.
+
+Looking at the Windows package which declares the `TryAcquireSRWLockExclusive` procedure we saw the following.
+```odin
+TryAcquireSRWLockExclusive :: proc(SRWLock: ^SRWLOCK) -> BOOL
+```
+
+This looked perfectly reasonably, until a corworker looked at the [MSDN page](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-tryacquiresrwlockexclusive) for it.
+```c
+BOOLEAN TryAcquireSRWLockExclusive(
+  [in, out] PSRWLOCK SRWLock
+);
+```
+
+At this point you should be asking yourself if there is any difference between `BOOL` and `BOOLEAN`. To save you the effort here's how Windows defines them.
+```c
+typedef int BOOL;
+typedef BYTE BOOLEAN;
+```
+
+Reading the result of a function which returns a single byte as a four byte integer casted to `bool` in Odin was incorrectly evaluating to `true` because those bytes are largely undefined and can contain anything and anything but a value of 0 is `true`. The lock was never acquired, even though it said it was. These three extra characters on the prototype, three extra bytes (in both cases) ended up being the issue. This was promptly [fixed](https://github.com/odin-lang/Odin/commit/7fe36de069520a0567d02b351cfd0514d83aa0c6).
+
+Do not let this horror story keep you from trying out Odin, new languages and early adopters always bare the most pain. That is a genuinely easy mistake anyone could've made. I was surprised to learn that `BOOL` and `BOOLEAN` are different in representation too, what a horrible choice made by Microsoft to introduce such confusion into function boundaries too.
 
 ## Performance
 While being a systems programming language, Odin's performance characteristics are slightly behind that of C and C++. There's three reasons for this I discovered while profiling compiled code.
