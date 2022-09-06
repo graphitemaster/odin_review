@@ -10,7 +10,7 @@ Written by Dale Weiler
 * [Twitter](https://twitter.com/actualGraphite)
 * [GitHub](https://github.com/graphitemaster)
 
-Last updated Monday, September 6th, 2022
+Last updated Tuesday, September 6th, 2022
 
 - [What is Odin](#what-is-odin)
 - [Experience](#experience)

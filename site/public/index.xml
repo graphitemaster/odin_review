@@ -13,7 +13,7 @@
       
       <guid>https://graphitemaster.github.io/odin_review/</guid>
       <description>A review of the Odin programming language # Written by Dale Weiler
-Twitter GitHub Last updated Monday, September 6th, 2022
+Twitter GitHub Last updated Tuesday, September 6th, 2022
 What is Odin Experience Conflict of interest Financial interest Relational interest Learning Slices Hidden reference semantics Hidden dereference semantics Hidden memory allocations Memory allocation confusion Quality of life Stability Performance Debugging Compilation performance Personal opinion Packages Imports Procedure groups Final remarks What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon.</description>
     </item>
     
