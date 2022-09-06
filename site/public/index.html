@@ -4,22 +4,22 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Almost Always Unsigned #  Written by Dale Weiler
-  Twitter  GitHub  Last updated Saturday, January 1, 2022
-The need for signed integer arithmetic is often misplaced as most integers never represent negative values within a program. The indexing of arrays and iteration count of a loop reflects this concept as well. There should be a propensity to use unsigned integers more often than signed, yet despite this, most code incorrectly choses to use signed integers almost exclusively.">
-<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Almost Always Unsigned" />
-<meta property="og:description" content="Almost Always Unsigned #  Written by Dale Weiler
-  Twitter  GitHub  Last updated Saturday, January 1, 2022
-The need for signed integer arithmetic is often misplaced as most integers never represent negative values within a program. The indexing of arrays and iteration count of a loop reflects this concept as well. There should be a propensity to use unsigned integers more often than signed, yet despite this, most code incorrectly choses to use signed integers almost exclusively." />
+<meta name="description" content="A review of the Odin programming language # Written by Dale Weiler
+Twitter GitHub Last updated Monday, September 6th, 2022
+What is Odin Experience Conflict of interest Financial interest Relational interest Learning Slices Hidden reference semantics Hidden dereference semantics Hidden memory allocations Memory allocation confusion Quality of life Stability Performance Debugging Compilation performance Personal opinion Packages Imports Procedure groups Final remarks What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon.">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Odin programming language review" />
+<meta property="og:description" content="A review of the Odin programming language # Written by Dale Weiler
+Twitter GitHub Last updated Monday, September 6th, 2022
+What is Odin Experience Conflict of interest Financial interest Relational interest Learning Slices Hidden reference semantics Hidden dereference semantics Hidden memory allocations Memory allocation confusion Quality of life Stability Performance Debugging Compilation performance Personal opinion Packages Imports Procedure groups Final remarks What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://graphitemaster.github.io/aau/" /><meta property="article:section" content="" />
+<meta property="og:url" content="https://graphitemaster.github.io/odin_review/" /><meta property="article:section" content="" />
 
 
 
-<title>Almost Always Unsigned | Almost Always Unsigned</title>
-<link rel="manifest" href="/aau/manifest.json">
-<link rel="icon" href="/aau/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/aau/book.min.def1a2c6e8c68ea651c2cf96c768d4cb866c38c405bfc71a6945bbca7a808a12.css" integrity="sha256-3vGixujGjqZRws&#43;Wx2jUy4ZsOMQFv8caaUW7ynqAihI="><!--
+<title>Odin programming language review | Odin programming language review</title>
+<link rel="manifest" href="/odin_review/manifest.json">
+<link rel="icon" href="/odin_review/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/odin_review/book.min.def1a2c6e8c68ea651c2cf96c768d4cb866c38c405bfc71a6945bbca7a808a12.css" integrity="sha256-3vGixujGjqZRws&#43;Wx2jUy4ZsOMQFv8caaUW7ynqAihI="><!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
 -->
@@ -35,7 +35,7 @@ https://github.com/alex-shpak/hugo-book
       
   <nav>
 <h2 class="book-brand">
-  <a href="/aau"><span>Almost Always Unsigned</span>
+  <a href="/odin_review"><span>Odin programming language review</span>
   </a>
 </h2>
 
@@ -72,7 +72,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -83,14 +83,14 @@ https://github.com/alex-shpak/hugo-book
         
   <div class="flex align-center justify-between">
   <label for="menu-control">
-    <img src="/aau/svg/menu.svg" class="book-icon" alt="Menu" />
+    <img src="/odin_review/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Almost Always Unsigned</strong>
+  <strong>Odin programming language review</strong>
 
   <label for="toc-control">
     
-    <img src="/aau/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    <img src="/odin_review/svg/toc.svg" class="book-icon" alt="Table of Contents" />
     
   </label>
 </div>
@@ -101,29 +101,36 @@ https://github.com/alex-shpak/hugo-book
     
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#the-arguments-against-unsigned">The arguments against unsigned</a>
+    <li><a href="#what-is-odin">What is Odin</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#conflict-of-interest">Conflict of interest</a>
       <ul>
-        <li><a href="#the-safety-argument">The safety argument</a></li>
-        <li><a href="#the-loop-in-reverse-argument">The loop in reverse argument</a></li>
-        <li><a href="#the-difference-of-two-numbers-can-become-negative">The difference of two numbers can become negative</a></li>
-        <li><a href="#computing-indices-with-signed-arithmetic-is-safer">Computing indices with signed arithmetic is safer</a></li>
-        <li><a href="#unsigned-multiplication-can-overflow">Unsigned multiplication can overflow</a></li>
-        <li><a href="#sentinel-values">Sentinel values</a></li>
-        <li><a href="#its-the-default">It&rsquo;s the default</a></li>
+        <li><a href="#financial-interest">Financial interest</a></li>
+        <li><a href="#relational-interest">Relational interest</a></li>
       </ul>
     </li>
-    <li><a href="#what-if-signed-was-defined-to-wrap">What if signed was defined to wrap?</a></li>
-    <li><a href="#what-about-trapping">What about trapping?</a></li>
-    <li><a href="#your-counter-arguments-are-about-pathological-inputs">Your counter arguments are about pathological inputs</a></li>
-    <li><a href="#the-arguments-for-unsigned">The arguments for unsigned</a>
+    <li><a href="#learning">Learning</a>
       <ul>
-        <li><a href="#most-integers-in-a-program-never-represent-negative-values">Most integers in a program never represent negative values</a></li>
-        <li><a href="#compiler-diagnostics-are-better-for-unsigned-but-thats-worse-overall">Compiler diagnostics are better for unsigned but that&rsquo;s worse overall</a></li>
-        <li><a href="#checking-for-overflow-and-underflow-is-easier-and-safer">Checking for overflow and underflow is easier and safer</a></li>
-        <li><a href="#your-code-will-be-simpler-and-faster">Your code will be simpler and faster</a></li>
-        <li><a href="#it-actually-works">It actually works</a></li>
+        <li><a href="#slices">Slices</a></li>
+        <li><a href="#hidden-reference-semantics">Hidden reference semantics</a></li>
+        <li><a href="#hidden-dereference-semantics">Hidden dereference semantics</a></li>
+        <li><a href="#hidden-memory-allocations">Hidden memory allocations</a></li>
+        <li><a href="#memory-allocation-confusion">Memory allocation confusion</a></li>
       </ul>
     </li>
+    <li><a href="#quality-of-life">Quality of life</a></li>
+    <li><a href="#stability">Stability</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#debugging">Debugging</a></li>
+    <li><a href="#compilation-performance">Compilation performance</a></li>
+    <li><a href="#personal-opinion">Personal opinion</a>
+      <ul>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#imports">Imports</a></li>
+        <li><a href="#procedure-groups">Procedure groups</a></li>
+      </ul>
+    </li>
+    <li><a href="#final-remarks">Final remarks</a></li>
   </ul>
 </nav>
 
@@ -135,9 +142,9 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="almost-always-unsigned">
-  Almost Always Unsigned
-  <a class="anchor" href="#almost-always-unsigned">#</a>
+  <article class="markdown"><h1 id="a-review-of-the-odin-programming-language">
+  A review of the Odin programming language
+  <a class="anchor" href="#a-review-of-the-odin-programming-language">#</a>
 </h1>
 <p>Written by Dale Weiler</p>
 <ul>
@@ -146,467 +153,301 @@ https://github.com/alex-shpak/hugo-book
 <li>
   <a href="https://github.com/graphitemaster">GitHub</a></li>
 </ul>
-<p>Last updated Saturday, January 1, 2022</p>
-<p>The need for signed integer arithmetic is often misplaced as most integers
-never represent negative values within a program. The indexing of arrays and
-iteration count of a loop reflects this concept as well. There should be a
-propensity to use unsigned integers more often than signed, yet despite this,
-most code incorrectly choses to use signed integers almost exclusively.</p>
-<p>Most of the motivation of this article applies to C and C++, but examples for
-other languages such as Go, Rust and 
-  <a href="https://odin-lang.org/">Odin</a> will also be
-presented in an attempt to establish that this concept applies to all
-languages, regardless of their choices (for instance C and C++ leave signed
-integer wrap undefined), but rather is intrinsic to the arithmetic itself.</p>
-<h2 id="the-arguments-against-unsigned">
-  The arguments against unsigned
-  <a class="anchor" href="#the-arguments-against-unsigned">#</a>
+<p>Last updated Monday, September 6th, 2022</p>
+<ul>
+<li>
+  <a href="/odin_review/#what-is-odin">What is Odin</a></li>
+<li>
+  <a href="/odin_review/#experience">Experience</a></li>
+<li>
+  <a href="/odin_review/#conflict-of-interest">Conflict of interest</a>
+<ul>
+<li>
+  <a href="/odin_review/#financial-interest">Financial interest</a></li>
+<li>
+  <a href="/odin_review/#relational-interest">Relational interest</a></li>
+</ul>
+</li>
+<li>
+  <a href="/odin_review/#learning">Learning</a>
+<ul>
+<li>
+  <a href="/odin_review/#slices">Slices</a></li>
+<li>
+  <a href="/odin_review/#hidden-reference-semantics">Hidden reference semantics</a></li>
+<li>
+  <a href="/odin_review/#hidden-dereference-semantics">Hidden dereference semantics</a></li>
+<li>
+  <a href="/odin_review/#hidden-memory-allocations">Hidden memory allocations</a></li>
+<li>
+  <a href="/odin_review/#memory-allocation-confusion">Memory allocation confusion</a></li>
+</ul>
+</li>
+<li>
+  <a href="/odin_review/#quality-of-life">Quality of life</a></li>
+<li>
+  <a href="/odin_review/#stability">Stability</a></li>
+<li>
+  <a href="/odin_review/#performance">Performance</a></li>
+<li>
+  <a href="/odin_review/#debugging">Debugging</a></li>
+<li>
+  <a href="/odin_review/#compilation-performance">Compilation performance</a></li>
+<li>
+  <a href="/odin_review/#personal-opinion">Personal opinion</a>
+<ul>
+<li>
+  <a href="/odin_review/#packages">Packages</a></li>
+<li>
+  <a href="/odin_review/#imports">Imports</a></li>
+<li>
+  <a href="/odin_review/#procedure-groups">Procedure groups</a></li>
+</ul>
+</li>
+<li>
+  <a href="/odin_review/#final-remarks">Final remarks</a></li>
+</ul>
+<h2 id="what-is-odin">
+  What is Odin
+  <a class="anchor" href="#what-is-odin">#</a>
 </h2>
-<p>There are a lot of arguments against the use of unsigned integers. Let me
-explain why I think they&rsquo;re mostly incorrect.</p>
-<h3 id="the-safety-argument">
-  The safety argument
-  <a class="anchor" href="#the-safety-argument">#</a>
+<p>For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C. This makes it a really attractive language for those who are unhappy with the increased complexity that other systems languages like to encourage.</p>
+<h2 id="experience">
+  Experience
+  <a class="anchor" href="#experience">#</a>
+</h2>
+<p>I started writing Odin professionally approximately a year ago. In that time I&rsquo;ve written about 50k lines of Odin. This article serves to share my experience with the language and to provide others with an authentic case study from the perspective of a single developer. This article&rsquo;s intended audience is that of someone who already knows Odin or at least knows of its existence. This will be of very little use if you&rsquo;re just learning Odin as I delve into more of the inner workings of the Odin language and more specifically the Odin compiler. This is written from my perspective. I&rsquo;m a systems engineer with approximately 10 years of systems architecture and design experience. That context is important because the use case, development process and methodology I use is specific to systems design. Odin is not only a systems programming language, it can also be used to write web applications (via WASM) and is more general purpose than one may think, in these contexts this article will be of no value as I have neither the experience or understanding to comment on the application of Odin those domains.</p>
+<h2 id="conflict-of-interest">
+  Conflict of interest
+  <a class="anchor" href="#conflict-of-interest">#</a>
+</h2>
+<p>I think it&rsquo;s important to be as transparent as possible while providing this case study. There are a few conflicts of interest that you, the reader should be aware of.</p>
+<h3 id="financial-interest">
+  Financial interest
+  <a class="anchor" href="#financial-interest">#</a>
 </h3>
-<p>The most typical argument against the use of unsigned integers is that it&rsquo;s
-more error prone since it&rsquo;s far easier for an expression to underflow than it
-is to overflow. This advice is so common that the official
-
-  <a href="https://google.github.io/styleguide/cppguide.html#Integer_Types">Google C++ Style Guide</a>
-outright discourages the use of unsigned types.</p>
-<p>We&rsquo;ll see in the following arguments where these safety issues come from and how
-to easily avoid them with trivial idioms that are easier to understand than
-using signed everywhere. We&rsquo;ll also see that these arguments are incorrect most
-of the time as they encourage continuing to write and use unsafe code.</p>
-<h3 id="the-loop-in-reverse-argument">
-  The loop in reverse argument
-  <a class="anchor" href="#the-loop-in-reverse-argument">#</a>
+<p>Odin is the programming language of choice at the company I work for: 
+  <a href="https://jangafx.com/">JangaFX</a>. We use it to develop 
+  <a href="https://jangafx.com/software/embergen/">EmberGen</a> and other upcoming products. I&rsquo;m financially motivated to develop in Odin. This isn&rsquo;t a personal hobby of mine, this is a serious commercial application of the language.</p>
+<h3 id="relational-interest">
+  Relational interest
+  <a class="anchor" href="#relational-interest">#</a>
 </h3>
-<p>When the counter of a for loop needs to count in reverse and the body of
-the loop needs to execute when the counter is also zero, most programmers will
-find unsigned difficult to use because <code>i &gt;= 0</code> will always evaluate <code>true</code>.</p>
-<p>The temptation is to cast the unsigned value to a signed one, e.g:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int64_t</span> i <span style="color:#f92672">=</span> <span style="color:#66d9ef">int64_t</span>(size) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; i<span style="color:#f92672">--</span>) {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
-</code></pre></div><p>Of course this is dangerous as it&rsquo;s a narrowing conversion, with a cast which
-silences a legitimate warning. In C and C++ it invokes undefined behavior when
-given specific large values and most certainly is exploitable. Most applications
-would just crash on inputs <code>&gt;= 0x7ffffffffffffffff</code>. The typical argument is
-that such a value would be &ldquo;pathological&rdquo;. Not only is this argument incorrect,
-it&rsquo;s even more dangerous which we will see later.</p>
-<p>This danger is one of the supporting arguments behind always using signed
-integer arithmetic. The argument is incorrect though, because <code>int64_t</code> would
-never permit a value <code>&gt;= 0x7ffffffffffffffff</code>. It&rsquo;s only avoiding the issue in
-that the specific problematic numeric range above that limit is no longer allowed.
-Tough luck if you needed a value that large and if you followed the sage advice
-of Google to always used signed and had that large value, well now you have a
-significantly worse problem, as you now invoked signed overflow unconditionally.
-Which for languages like C and C++, invoke undefined behavior. While languages
-like Go and Odin will wrap and have the wrong numeric ranges in the loop
-as a result of that wrap behavior.</p>
-<p>The correct approach here is that unsigned underflow is well-defined in C and
-C++ and we should be teaching the behavior of wrapping arithmetic as it&rsquo;s
-useful in general, but it also makes reverse iteration as easy as forward.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">for</span> (size_t i <span style="color:#f92672">=</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> size; i<span style="color:#f92672">--</span>) {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
-</code></pre></div><p>The approach here is to begin from <code>size - 1</code> and count down on each iteration.
-When the counter reaches zero, the decrement causes the counter to underflow and
-wrap around to the max possible value of the unsigned type. This value is far
-larger than <code>size</code>, so the condition <code>i &lt; size</code> evaluates false and the loop
-stops.</p>
-<p>Languages like Rust chose to make even unsigned underflow a trap representation
-in Debug builds, but specific features like <code>Range</code> will let you safely achieve
-the same efficient wrapping behavior on underflow with much cleaner syntax.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> (<span style="color:#ae81ff">0</span><span style="color:#f92672">..</span>size).rev() {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
-</code></pre></div><p>With this approach, no casts are needed, no silent bugs are introduced, and
-the &ldquo;pathological&rdquo; input still works correctly. In fact, this form permits every
-possible value from <code>[0, 0xffffffffffffffff)</code>, covering the entire range.</p>
-<p>It should be noted that if <code>size == 0</code> these loops still work because <code>0 - 1</code>
-produces the largest possible value of the unsigned type which is larger than
-<code>size</code> (still <code>0</code>) and so the loop never enters.</p>
-<h3 id="the-difference-of-two-numbers-can-become-negative">
-  The difference of two numbers can become negative
-  <a class="anchor" href="#the-difference-of-two-numbers-can-become-negative">#</a>
+<p>The author of Odin is a coworker and a personal friend who I&rsquo;ve known for three years. In my experience the communities around certain programming languages can be quite critical and toxic to those who work on them. If you&rsquo;re looking for a rant where I&rsquo;m critical of my friend because of complaints I have with their language you can stop reading now.</p>
+<h2 id="learning">
+  Learning
+  <a class="anchor" href="#learning">#</a>
+</h2>
+<p>Learning Odin is very easy. As someone with a predominantly C and C++ background prior to using Odin, it took me about a week to become productive in it. It should be noted in this time I had direct access to the author of the language to answer questions I had, so your milage may vary.</p>
+<p>Every new language has growing pains for beginners and Odin is no different. Early on I discovered five things in particular that proved to be difficult to get used to.</p>
+<blockquote>
+<p>It&rsquo;s important to understand that I&rsquo;m a senior software developer. I&rsquo;m not a beginner programmer, so my definition of what it means to be a &ldquo;beginner&rdquo; using Odin is that of someone who already has a decade plus experience in systems programming using systems programming languages.</p>
+</blockquote>
+<h3 id="slices">
+  Slices
+  <a class="anchor" href="#slices">#</a>
 </h3>
-<p>When you want to compute the difference (or delta) between two numbers, it&rsquo;s
-often the case to want to express that as:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">delta <span style="color:#f92672">=</span> x <span style="color:#f92672">-</span> y;
-</code></pre></div><p>Although most of the time the sign isn&rsquo;t needed so you tend to write and see:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">delta <span style="color:#f92672">=</span> abs(x <span style="color:#f92672">-</span> y);
-</code></pre></div><p>The argument is that unsigned is dangerous here because if <code>y &gt; x</code> then you get
-underflow. The problem with this argument is it&rsquo;s not valid because the code
-itself is simply incorrect regardless of the signedness of <code>x</code> and <code>y</code>. There
-are values for both <code>x</code> and <code>y</code> which will lead to signed integer underflow.
-So like before, in languages like C and C++, you just unconditionally invoked
-undefined behavior since signed integer underflow is undefined.</p>
-<p>It turns out that computing differences safely is actually quite hard for
-signed integers because of underflow, even in languages which support wrapping
-behavior for them, e.g <code>INT_MAX - INT_MIN</code> is still going to be incorrect even.
-There just isn&rsquo;t a trivial way to do this safely; this is the best technique
-I currently know of.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">if</span> ((y <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> x <span style="color:#f92672">&lt;</span> INT_MIN <span style="color:#f92672">+</span> y) <span style="color:#f92672">||</span> (y <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> x <span style="color:#f92672">&gt;</span> INT_MAX <span style="color:#f92672">+</span> y)) {
-    <span style="color:#75715e">// error
-</span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
-    delta <span style="color:#f92672">=</span> abs(x <span style="color:#f92672">-</span> y);
+<p>Odin, unlike C and C++ has a builtin slice type. As someone who has a strong propensity towards pointer arithmetic, slices weren&rsquo;t easy for me to become comfortable with. You may find this a bit surprising since most people find pointers and pointer arithmetic confusing. The reality is that slices require a different approach to problem solving. The reason for this is because:</p>
+<ul>
+<li>Slices cannot go &ldquo;backwards&rdquo;. You cannot have a negative index into a slice and you cannot decrement or subtract a slice.</li>
+<li>Slices always store a length while a lot of pointer-focused code tends to either have an explicit associated length (which is similar to a slice), or have an <strong>implied length</strong> (something I noticed I relied a lot on). An implied length is one where the length is known through some other means other than being explicitly associated. This can be encoded in the function signature like in the case of <code>glVertex3fv</code> where you know the pointer to the <code>float*</code> parameter will be of three floats, it can be a special terminator value, like <code>\0</code> in a string (null-terminated string), or a <code>NULL</code> pointer at the end of an array of pointers, etc. These ideas, while more dangerous, are simply not expressible with slices.</li>
+</ul>
+<p>It became very apparent while using Odin that I had a 
+  <a href="https://en.wikipedia.org/wiki/Problem_solving#Functional_fixedness">functional fixedness</a> to solving problems relying on this behavior that I had to overcome to become comfortable with slices. This took me several months.</p>
+<h3 id="hidden-reference-semantics">
+  Hidden reference semantics
+  <a class="anchor" href="#hidden-reference-semantics">#</a>
+</h3>
+<p>Odin has pointers like any other systems language, but it also has a hidden reference semantics for values. In two very specific circumstances, primarily the <code>switch x in y</code> and <code>for x in y</code> statements you can prefix the <code>y</code> operand with the address-of operator <code>&amp;</code> to get reference semantics on <code>x</code>. That is <code>x</code> will look and behave like a regular variable, but assignments to it will propagate to the memory address of that variable as if <code>x</code> was an implicitly dereferenced pointer. This is similar to references in C++. This is the only place in Odin where references exist, every other place you want these semantics you need to be explicit with pointers. I found this a bit confusing and surprising because it&rsquo;s a very unique and specific situation that does not apply generally in other areas of the language. This is a stark contrast to C++ where reference semantics can be used anywhere thanks to reference types.</p>
+<h3 id="hidden-dereference-semantics">
+  Hidden dereference semantics
+  <a class="anchor" href="#hidden-dereference-semantics">#</a>
+</h3>
+<p>In various parts of the language, pointers to things can be implicitly dereferenced for you. This makes the code nicer to read and easier to refactor. This hidden dereferencing is idiomatic of Odin code but it can be difficult for a beginner. To give some examples.</p>
+<ul>
+<li><code>len(a)</code> and <code>cap(a)</code> will implicitly dereference for pointer to slice (i.e <code>^[]T</code>) and pointer to dynamic array (i.e <code>^[dynamic]T</code>).</li>
+<li><code>foo[key]</code> will implicitly dereference for pointer to map (i.e <code>^map[Key]Value</code>).</li>
+<li><code>foo[index]</code> will implicitly dereference for pointer to slice (i.e <code>^[]T</code>) and pointer to dynamic array (i.e <code>^[dynamic]T</code>).</li>
+<li><code>a.b</code> will implicitly dereference if <code>a</code> is a pointer, that is <code>a.b</code> is sugar for <code>a^.b</code> when <code>a</code> is pointer type.</li>
+<li><code>switch v in u</code> will implicitly deference if <code>u</code> is a pointer of <code>union</code> type.</li>
+<li><code>for x in y</code> will implicitly dereference <code>y</code> if <code>y</code> is a pointer to <code>map</code> (i.e <code>^map[Key]Value</code>), slice (i.e <code>^[]T</code>), or dynamic array (i.e <code>^[dynamic]T</code>).</li>
+<li><code>a-&gt;b()</code> will implicitly dereference <code>a</code> if a is a pointer, but continue to pass <code>a</code> as the first argument to <code>b</code> as a pointer.</li>
+</ul>
+<h3 id="hidden-memory-allocations">
+  Hidden memory allocations
+  <a class="anchor" href="#hidden-memory-allocations">#</a>
+</h3>
+<p>Almost nothing in Odin will perform a hidden memory allocation on you. This is a huge improvement over C++ where almost everything can perform a hidden memory allocation. In comparison to C however, two specific situations can incur a hidden memory allocation in Odin. When constructing a dynamic array or map literal. These must be paired with a call to <code>delete</code>. This is not immediately obvious to a beginner and Odin has a compiler flag <code>-no-dynamic-literals</code> which can disable these, but doing so also prevents you from using them.</p>
+<h3 id="memory-allocation-confusion">
+  Memory allocation confusion
+  <a class="anchor" href="#memory-allocation-confusion">#</a>
+</h3>
+<p>Odin has two idiomatic ways to allocate memory. The <code>make</code> and <code>new</code> procedures. When destroying something created with <code>make</code> you call <code>delete</code>. When destroying something created with <code>new</code> you call <code>free</code>. This is a bit confusing if you come from C++ where <code>new</code> is paired with <code>delete</code>. I found myself making this mistake endlessly due to muscle memory. I suspect if I ever go back to writing C++ I&rsquo;ll find myself making the opposite mistake now.</p>
+<p>One should be cognizant of the muscle memory one develops while working in programming languages and how it can become a barrier to learning others and how it can introduce subtle mistakes as well.</p>
+<h2 id="quality-of-life">
+  Quality of life
+  <a class="anchor" href="#quality-of-life">#</a>
+</h2>
+<p>The immediate benefit to using Odin over C and C++ is that it provides a bunch of obvious needed quality of life improvements that benefit the type of work I was already doing as an systems developer.</p>
+<ul>
+<li>
+<p>Slices</p>
+<p>As mentioned before, took awhile for me to get used to them but they&rsquo;re nicer to work with than pointer arithmetic.</p>
+</li>
+<li>
+<p>Builtin dynamic array and hash map types</p>
+<p>No need for writing your own. The implementations of these are quite good. There is no builtin hash set type but Odin supports zero-sized structure types unlike C and C++ so you can just make the value-type of a map an empty structure type and Odin will not allocate any memory for the values.</p>
+</li>
+<li>
+<p>Bit sets</p>
+<p>It&rsquo;s quite common in systems programming to want to create bit flags to pack various state into a single integer. In Odin you can create a regular enum without resorting to assigning them all values of <code>1 &lt;&lt; n</code> and instead just instantiate a <code>bit_set[Enum]</code> and get set operations instead.</p>
+</li>
+<li>
+<p>SOA (Structure of Arrays)</p>
+<p>Can turn any array of structures into a structure of arrays by giving it the <code>#soa</code> attribute. This changes the ordering of the data in memory by having the compiler generate a structure in the alternative memory layout. Pointers to fields still work through the use of fat pointers instead. This can be great for performance critical code where you want to maximize cache utilization.</p>
+</li>
+<li>
+<p>Multiple return values</p>
+<p>Not to be confused with a tuple type, this works more similar to Lua.</p>
+</li>
+<li>
+<p>Half float</p>
+<p>While not native to CPUs yet, a lot of what people are doing is GPU and AI work where half-float reigns supreme. Having a native half-float type in the language makes interop so much easier. The core library implements math kernels for <code>f16</code> as well which saves a tremendous amount of work.</p>
+</li>
+<li>
+<p>Array programming</p>
+<p>You often see operator overloaded types in C++ to implement vector types. This is completely unnecessary as Odin already supports all the usual arithmetic operations on array types by applying them component-wise. This is quite nice to use and auto-vectorizes in my experience too.</p>
+</li>
+<li>
+<p>Matrix types</p>
+<p>Native matrix types exist up to 4x4 for any of the floating point types, including half-float. This obviates the need for operator overloading completely for game developers.</p>
+</li>
+<li>
+<p>Discriminated unions</p>
+<p>Cannot tell you how frustrating it is that C++&rsquo;s idea of a sum type is a library provided <code>std::variant</code>. A union of a single type is an optional type called a <code>Maybe</code>.</p>
+</li>
+<li>
+<p><code>defer</code></p>
+<p>Declarative control flow that obviates the need for RAII.</p>
+</li>
+<li>
+<p><code>or_return</code> and <code>or_else</code>.</p>
+<p>These are hard to explain. Check out 
+  <a href="https://www.gingerbill.org/article/2021/09/06/value-propagation-experiment-part-2/">The Value Propagation Experiment</a></p>
+</li>
+<li>
+<p>Foreign function interface</p>
+<p>Interfacing with C libraries is really nice. While it isn&rsquo;t as nice as Zig which can parse C headers directly, Odin&rsquo;s FFI allows linking against C libraries directly, while letting you rename symbol names through <code>@(link_prefix)</code> and specify libraries directly in the source file requiring no changes to the build system, because;</p>
+</li>
+<li>
+<p>The compiler is the toolchain</p>
+<p>There&rsquo;s no need for a build system, nor to explicitly call the linker. The compiler does it all.</p>
+</li>
+<li>
+<p>Vendor libraries</p>
+<p>The Odin compiler comes with a bunch of vetted vendor libraries out of box for all sorts of things you may need. I even 
+  <a href="https://twitter.com/actualGraphite/status/1493582583459983361">tweeted</a> about how Odin might be the best language for graphics and game developers because everything you&rsquo;d need comes included.</p>
+</li>
+</ul>
+<p>There are just some of my personal favorite quality of life improvements, many more exist than what I&rsquo;ve listed above and you should check out the language if you haven&rsquo;t already to see the others.</p>
+<p>What was less obvious and I did not expect while writing Odin was how miserable I actually was writing C++ prior. I needed the perspective of using something else to see just how terrible C++ was on my personal quality of life. I also 
+  <a href="https://twitter.com/actualGraphite/status/1499287414392737798">tweeted</a> about this.</p>
+<h2 id="stability">
+  Stability
+  <a class="anchor" href="#stability">#</a>
+</h2>
+<p>When I first started writing Odin I found the compiler would crash often. After personally debugging the compiler it became evident that the threaded type checker had various data races which only seemed to occur on my 32-thread CPU. These are now fixed and I can confidently say that the Odin compiler has been relatively stable in my year using it. It should be noted that sometimes I&rsquo;ve run into internal compiler errors or LLVM code generation errors when using more rare and exotic constructs in the language that don&rsquo;t see much usage or testing, but every time I&rsquo;ve encountered them they&rsquo;ve been easy to work around or fixed pretty much immediately when an issue was opened on the Odin GitHub.</p>
+<h2 id="performance">
+  Performance
+  <a class="anchor" href="#performance">#</a>
+</h2>
+<p>While being a systems programming language, Odin&rsquo;s performance characteristics are slightly behind that of C and C++. There&rsquo;s three reasons for this I discovered while profiling compiled code.</p>
+<ol>
+<li>
+<p>The compiler is not as aggressive at optimization as C or C++ (and it cannot be)</p>
+<ul>
+<li>
+<p>It lacks strict-aliasing optimizations as they&rsquo;re incompatible with the language. This is similar to MSVC which doesn&rsquo;t have them either in C or C++ as Windows depends on this behavior, as does the Linux kernel which disables them in gcc with <code>-fno-strict-aliasing</code>. The performance characteristics of this in general vary depending on how your code is written. Systems programmers appear to be divided on the benefit of these.</p>
+</li>
+<li>
+<p>It lacks poison-value based optimizations. Overflowing a signed integer (in C or C++) or operating on a null pointer, etc. The type of values these produce are &ldquo;undefined&rdquo; in those languages, when depending on them, or operating on them, these value are considered &ldquo;poisoned&rdquo;. Compilers of most systems languages optimize on the assumption you do not operate on this &ldquo;undefined behavior&rdquo;. Odin does not have undefined behavior and so these optimizations cannot be applied. In my experience these optimizations rarely provide any significant performance improvement but some sources I&rsquo;ve read cite ~3% improvements in some cases.</p>
+</li>
+<li>
+<p>Odin lacks global value numbering optimizations, only allowing very basic lexically equivalent common subexpressions to be eliminated and similar local value number optimizations. There are allegedly areas in the language where this would break things but I haven&rsquo;t been able to validate that so this may just be an overly conservative decision of the compiler or a bug in LLVM (which Odin uses for it&rsquo;s code generation), being avoided.</p>
+</li>
+<li>
+<p>No devirtualization. Since Odin doesn&rsquo;t support virtual functions, implementing them manually with function pointers as you would in C, (which in Odin is a variable with procedure type) means in contexts where all information is available, the compiler will not directly call the procedure like it would in C++. On x86_64 this is rarely a problem however since RIP-relative addressing for an indirect function call has very little to no meaningful overhead compared to a direct call which behaves the same way, but it does prevent inlining and on other architectures it can have some overhead. This can have a profound effect on performance for procedures that are called very often, like a comparator in a sort implementation. This is one of the reasons <code>std::sort</code> in C++ is often faster than <code>qsort</code> in C, even when both use the exact same sorting algorithm. This wouldn&rsquo;t normally be a complaint if it weren&rsquo;t for the fact that clang and gcc can devirtualize even regular function pointers in C with various heuristics as part of it&rsquo;s devirtuallization efforts. Nothing in the Odin language would prevent similar optimizations, just the current Odin compiler doesn&rsquo;t currently.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>No way to inline generics. Odin supports compile-time parametric polymorphism, however there&rsquo;s no way to refer to a procedure or constant at compile-time unless passed literally. This means you often end up with runtime indirect procedure calls which can be seen in the core library. In C++ you can refer directly to a static method or constant with <code>T::method</code> or <code>T::value</code>, meaning you can refer to constants non-literally through just a <code>typename T</code>. This is not possible in Odin, which is the primary limitation for generic inlining. A structure just cannot embed a constant of any type. The standard library choses to use non-constant procedures in generic code such as <code>sort_by</code>.</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">sort_by :: proc(slice: []$T, cmp: proc(lhs, rhs: T) -&gt; bool) {
+    // ...
 }
-</code></pre></div><p>For unsigned integers however, it&rsquo;s much easier to just write</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">delta <span style="color:#f92672">=</span> max(x, y) <span style="color:#f92672">-</span> min(x, y);
-</code></pre></div><p>This will always give the absolute difference safely. It might be personal
-preference, but I find this easier to read too. The name <code>delta</code> is no longer
-necessary as the expression is self-documenting.</p>
-<h3 id="computing-indices-with-signed-arithmetic-is-safer">
-  Computing indices with signed arithmetic is safer
-  <a class="anchor" href="#computing-indices-with-signed-arithmetic-is-safer">#</a>
-</h3>
-<p>An extension to the above argument is that if you have a more complicated
-expression to compute an index it&rsquo;s just safer to express that with signed.
-I think this argument primarily comes from an invalid intuition of underflow
-and overflow, yet it manifests for signed in significantly worse ways.</p>
-<p>Lets take the most trivial &ldquo;slightly more complicated&rdquo; expression to compute an
-index as an example: the middle of interval.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> mid <span style="color:#f92672">=</span> (low <span style="color:#f92672">+</span> high) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
-</code></pre></div><blockquote>
-<p>I picked this as a real-world, non-contrived example. You can expect to find
-this in binary searches, merge sort, and pretty much any other divide-and-conquer
-algorithm.</p>
-</blockquote>
-<p>This is how most people would write it. The average of low and high, truncated
-to the nearest integer. When the sum of <code>low</code> and <code>high</code> exceeds <code>2^31-1</code> the
-sum overflows to a negative value and the negative stays negative when divided.
-Using a larger signed integer type here does not save you either because it&rsquo;s
-easy for the sum to exceed <code>2^63-1</code> too.</p>
-<p>Like the previous example, this code is just not ideal.</p>
-<p>In fact, computing the mid-point of two variables safely is pretty much
-impossible in any language without the help of a library function because
-with wrapping or otherwise, there are specific inputs that fail.</p>
-<p>One common solution for signed is to rewrite it to this idiom, which still fails
-for <code>high = INT_MAX</code> and <code>low = INT_MIN</code>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> mid <span style="color:#f92672">=</span> low <span style="color:#f92672">+</span> (high <span style="color:#f92672">-</span> low) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
-</code></pre></div><p>Sticking with unsigned integers, you might think you can write it the obvious
-way you originally intended to precisely because underflow is well-defined
-but we&rsquo;ll see that this has problems too.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">size_t mid <span style="color:#f92672">=</span> (low <span style="color:#f92672">+</span> high) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
-</code></pre></div><p>This doesn&rsquo;t actually work for e.g: <code>low = 0x80000000</code> and <code>high = 0x80000002</code>,
-which would underflow and produce <code>2</code> which divided by <code>2</code> produces <code>1</code>, when
-the correct value is actually <code>0x80000001</code>.</p>
-<p>Where unsigned does benefit here is when these are used as indices into an array.
-The signed behavior will almost certainly produce invalid indices which leads to
-memory unsafety issues. The unsigned way will never do that, it&rsquo;ll stay bounded,
-even if the index it produces is actually wrong. This is a much less-severe
-logic bug, but can still be used maliciously depending on context.</p>
-<p>The correct safe way to do this regardless of signedness is to convert
-everything to unsigned and account for the wrapping with masked addition.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">T <span style="color:#a6e22e">midpoint</span>(T x, T y) {
-    <span style="color:#75715e">// U is the unsigned version of your type T, or same as T if T already unsigned
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// digits is the number of numeric digits (not including sign) in your type T.
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// std::numeric_limits&lt;T&gt;::digits in C++ is helpful here.
-</span><span style="color:#75715e"></span>    U shift <span style="color:#f92672">=</span> digits <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    U difference <span style="color:#f92672">=</span> (U)x <span style="color:#f92672">-</span> (U)y;
-    U sign <span style="color:#f92672">=</span> y <span style="color:#f92672">&lt;</span> x;
-    U half <span style="color:#f92672">=</span> (difference <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> (sign <span style="color:#f92672">&lt;&lt;</span> shift) <span style="color:#f92672">+</span> (sign <span style="color:#f92672">&amp;</span> difference);
-    T mid <span style="color:#f92672">=</span> (T)(x <span style="color:#f92672">+</span> half);
-    <span style="color:#66d9ef">return</span> mid;
+</code></pre><p>When it could use a constant procedure type like this, which would inline but prevents some procedures from being provided.</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">sort_by :: proc(slice: []$T, $cmp: proc(lhs, rhs: T) -&gt; bool) {
+    // ...
 }
-</code></pre></div><blockquote>
-<p>C++ actually has <code>std::midpoint</code> which does precisely this.</p>
-</blockquote>
-<h3 id="unsigned-multiplication-can-overflow">
-  Unsigned multiplication can overflow
-  <a class="anchor" href="#unsigned-multiplication-can-overflow">#</a>
-</h3>
-<p>When multiplying unsigned variables it&rsquo;s a concern that such expressions will
-easily overflow and produce a value far smaller than the correct value. This is
-a very common complaint for memory safety specifically because unsigned
-multiplication is most often seen when allocating arrays. It&rsquo;s tempting to write
-the following in C.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">malloc(<span style="color:#66d9ef">sizeof</span>(Object) <span style="color:#f92672">*</span> n)
-</code></pre></div><p>If such an expression were to overflow then <code>malloc</code> will allocate and return
-a pointer for memory not actually sufficiently large for all <code>n</code> <code>Object</code>. Again,
-signed here does not save us, in practice this will silently avoid the memory
-safety issue by over-allocating around 4 GiB of memory had you used <code>int</code> since
-a negative casted to <code>size_t</code> becomes about that large. Random resource
-exhaustion is not exactly a better situation to be in either.</p>
-<p>There are a couple better ways to write this. The first obvious one is just
-use <code>calloc</code>. That does have a zeroing cost though and doesn&rsquo;t help if you need
-to <code>realloc</code>.</p>
-<p>Languages like C++ and Go noticed this problem and solved them in cleaner ways,
-eliminating the need for the dangerous multiply.</p>
-<ul>
-<li>C++
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">new</span> Object[n];
-</code></pre></div></li>
-<li>Go
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">make([]<span style="color:#a6e22e">Object</span>, <span style="color:#a6e22e">n</span>);
-
-<span style="color:#75715e">// But it also even has an explicit n * m form as well.
-</span><span style="color:#75715e"></span>make([]<span style="color:#a6e22e">Object</span>, <span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">m</span>);
-</code></pre></div></li>
-</ul>
-<p>Those don&rsquo;t apply generally though. It&rsquo;s very trivial to check if <code>x * y</code> would
-overflow though and you should just learn the extremely simple and obvious test.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">if</span> (y <span style="color:#f92672">&amp;&amp;</span> x <span style="color:#f92672">&gt;</span> (T)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">/</span>y)
-</code></pre></div><blockquote>
-<p>Where <code>(T)-1</code> here is your unsigned type and casting <code>-1</code> just gives you the max
-value, i.e every bit set. You can also use <code>~((T)0)</code>, <code>UINT{8,16,32,64}?_MAX</code>,
-or <code>numeric_limits&lt;T&gt;::max()</code> in C++, there&rsquo;s a lot of ways to compute this value.</p>
-</blockquote>
-<h3 id="sentinel-values">
-  Sentinel values
-  <a class="anchor" href="#sentinel-values">#</a>
-</h3>
-<p>One extremely common use of signed integers is using the negative range to encode
-an error code or some 
-  <a href="https://en.wikipedia.org/wiki/Sentinel_value">sentinel value</a>.
-This is a terrible programming practice and a literal category error. It&rsquo;s pretty
-unavoidable when working with existing or legacy code that is designed around it,
-but it&rsquo;s not a strong argument of signed integers for continuing this practice.
-You can still have sentinels with unsigned too, not that you should.</p>
-<p>We should not be encouraging this and using it as an argument in favor of signed.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> connect();
-<span style="color:#66d9ef">if</span> (result <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>) <span style="color:#75715e">// ...
-</span></code></pre></div><p>Where anything but a positive value is an error.</p>
-<blockquote>
-<p>This is typical of early C.</p>
-</blockquote>
-<p>There are multiple better and safer ways to express this, for instance.</p>
-<ul>
+</code></pre><p>Or in my opinion, a constrained type like this which would work for anything and still inline would be best.</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">sort_by :: proc(slice: []$T, cmp: $P)
+  where intrinsics.type_is_proc(P) &amp;&amp;
+        intrinsics.type_proc_return_type(P, 0) == bool
+{
+    // ...
+}
+</code></pre><p>But for some reason choses not to.</p>
+</li>
 <li>
-<p>An out parameter for the result. Not exactly clean looking though.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">if</span> (uint result; connect(<span style="color:#f92672">&amp;</span>result)) {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
-</code></pre></div></li>
-<li>
-<p>A return of a tuple or pair. Little nicer looking.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">tuple<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span>, uint<span style="color:#f92672">&gt;</span> result <span style="color:#f92672">=</span> connect();
-pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span>, uint<span style="color:#f92672">&gt;</span> result <span style="color:#f92672">=</span> connect();
-<span style="color:#66d9ef">if</span> (get<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">0</span><span style="color:#f92672">&gt;</span>(result)) {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
-</code></pre></div></li>
-<li>
-<p>We could use an option type. Quite common in Rust.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// connect returns Option&lt;u32&gt;
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">match</span> connect() {
-Some(<span style="color:#66d9ef">u32</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>None      <span style="color:#f92672">=&gt;</span> <span style="color:#75715e">// error
-</span><span style="color:#75715e"></span>}
-</code></pre></div></li>
-<li>
-<p>However, if the numeric range is well-defined to begin with, just define
-the entire domain and avoid using full-range integers to represent a subset
-of all the possible values.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">enum</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConnectionStatus</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">unsigned</span> {
-    Connected,
-    NoRouteToHost,
-    Disconnected,
-    TimedOut,
-};
-
-ConnectionStatus status <span style="color:#f92672">=</span> connect();
-<span style="color:#66d9ef">if</span> (status <span style="color:#f92672">==</span> ConnectionStatus<span style="color:#f92672">::</span>Connected) {
-    <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>}
-</code></pre></div></li>
-<li>
-<p>Some languages like Odin and Go have multiple return and the preferred
-idiomatic way is the following.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#a6e22e">status</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">connect</span>();
-    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-        <span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span>    }
-</code></pre></div></li>
-</ul>
-<p>These are all superior methods which eliminate the need to encoding error states
-in the negative portion of a signed integer and are all representable in almost
-any language.</p>
-<h3 id="its-the-default">
-  It&rsquo;s the default
-  <a class="anchor" href="#its-the-default">#</a>
-</h3>
-<p>This is a weak argument, but it&rsquo;s at least the only one that is hard to refute.
-C and C++ default <code>int</code> to signed and that&rsquo;s a legacy choice that has persisted
-in many languages that are descendants of C. It&rsquo;s generally agreed upon now that
-a lot of defaults in C were bad, maybe we should consider this too?</p>
-<h2 id="what-if-signed-was-defined-to-wrap">
-  What if signed was defined to wrap?
-  <a class="anchor" href="#what-if-signed-was-defined-to-wrap">#</a>
+<p>Runtimes bounds checking. Odin defaults to bounds checking all slice indexing. There&rsquo;s obviously a cost associated with this. This can be disabled on a per-scope or per-procedure basis with <code>#no_bounds_check</code>, or globally with a compiler flag. For release builds or for performance critical code you can work around it. It&rsquo;s just something to be aware of.</p>
+</li>
+</ol>
+<h2 id="debugging">
+  Debugging
+  <a class="anchor" href="#debugging">#</a>
 </h2>
-<p>Some languages like Go and 
-  <a href="https://odin-lang.org/">Odin</a> claim to avoid these
-problems because signed integer arithmetic is defined to wrap on underflow and
-overflow. The safety arguments there are incorrect as well. In all the previous
-examples, if the signed integers wrapped, they would almost always produce
-negative values which would either introduce silent logic bugs, or worse,
-memory safety issues if used as indices into arrays as an example.</p>
+<p>This is the one area of the current Odin compiler that requires serious work and is an unfortunate let-down in my experience. When I first started using Odin, executables could be debugged with the usual tools that I was familiar with as a systems programmer. I could inspect variables and step through code in <code>gdb</code>, which many would say is the bare minimum. What was more valuable to me though was that I could use <code>valgrind</code> to find memory leaks, <code>helgrind</code> to find data races and threading errors, <code>massif</code> to find pathological memory usage issues, even <code>cachegrind</code> &amp; <code>callgrind</code> to find performance issues. They all worked really well. These tools are invaluable to me as a developer and I had used them to great success to improve EmberGen.</p>
 <blockquote>
-<p>The only way to ever make safe use of signed integers in this manner is to
-bounds check all array accesses, which has a appreciable, non-negligible runtime
-cost. Bounds checking is also quite error prone if not automated as it&rsquo;s easy
-to forget to check and often unmaintained under code refactoring.</p>
+<p>If it isn&rsquo;t obvious by now, I do all development on Linux because I find the ecosystem around systems development superior to that of Windows which lacks all the tools I&rsquo;ve mentioned thus far, there isn&rsquo;t even equivalent tools in that space. I also use <code>dtrace</code>, <code>strace</code> and <code>ltrace</code> in my day to day.</p>
 </blockquote>
-<p>Unfortunately, for languages based on LLVM, no amount of hand-waving and wanting
-signed wrapping to be defined will work no matter how hard you try, so such
-statements about safety are factually incorrect. Here&rsquo;s a somewhat non-exhaustive
-list of all the undefined behavior of signed integer arithmetic in LLVM which
-applies to all languages which use LLVM:</p>
-<ul>
-<li><code>x / 0</code></li>
-<li><code>INT_MIN / -1</code></li>
-<li><code>INT_MAX % -1</code></li>
-<li><code>INT_MAX - INT_MIN</code></li>
-</ul>
+<p>The Odin compiler isn&rsquo;t that stable however and over the past year the debugging experience for me personally has become so severely bad that none of the tools above work anymore, not even <code>gdb</code>. This is for various reasons, but most notably it&rsquo;s because generating debug information with LLVM (as the Odin compiler does) is pretty much impossible to do correctly. As of writing this, the Odin compiler generates debug information in the DWARF3 format in such a way that the debug symbols crash all the tools when doing a simple backtrace. To make matters worse, the act of generating debug information in LLVM appears to cause code to miscompile entirely and break the application in subtle ways. The mere fact LLVM can even emit broken debug information or miscompile code that uses it is completely absurd. We&rsquo;ve not been able to fix this. If anyone with LLVM experience can improve the debugging situation and is looking for a job I believe the Odin author is offering money for this so you should reach out.</p>
+<p>The other reason is because Odin is striving to become free-standing in the face of libc. That is there&rsquo;s a push to write the core library in such a way as to not depend on it at all. This is a noble goal, but it means all the existing debug tools which work by replacing libc no longer work or work as well. This means <code>valgrind</code> cannot really detect memory issues as well since Odin has it&rsquo;s own internal allocators. <code>helgrind</code> cannot work because Odin doesn&rsquo;t use <code>pthread</code> primitives. <code>ltrace</code> cannot work because that just provides wrappers over every libc function, etc.</p>
+<p>This situation should improve overtime since Odin now has an intrinsic for Valgrind client requests, but all the core library needs to be riddled with the appropriate client calls to build up all the infrastructure that has already been built for libc. In some cases it may not actually be possible as <code>helgrind</code> assumes a specific pattern of indicating when threading primitives are initialized while Odin relies on zero-initialization of all threading primitives, meaning compiler instrumentation may be required. As of writing this, none of this infrastructure exists though.</p>
 <blockquote>
-<p>These are certain to produce invalid results in languages like Go, Rust, and Odin.</p>
+<p>It should be noted that under Windows, none of these issues are a problem. This is because none of these tools exist there, but in the case of Visual Studio&rsquo;s debugger, the generated debug information appears to work correctly, albeit it&rsquo;s still not as good as C or C++.</p>
 </blockquote>
-<h2 id="what-about-trapping">
-  What about trapping?
-  <a class="anchor" href="#what-about-trapping">#</a>
+<h2 id="compilation-performance">
+  Compilation performance
+  <a class="anchor" href="#compilation-performance">#</a>
 </h2>
-<p>Some languages such as Rust take a different approach where any integer underflow
-or overflow in debug builds will lead to a trap representation where your program
-will panic. Sanitizers for C and C++ also exist to help detect these problems and
-because C and C++ define unsigned underflow to wrap, it&rsquo;s actually the case that
-the use of signed integers is better as it&rsquo;s the only way you can get trap
-behavior for integers, as using it on unsigned would trigger trap representations
-for valid code that relies on that behavior.</p>
-<p>Trap representations are actually quite insufficient as they can only trigger at
-runtime when those paths are successfully executed with the correct trap-producing
-inputs. This coverage is impossible to expect in any non-trivial program even
-with exhaustive unit testing. The idea is also incompatible in many contexts such
-as library code where you almost never want the library to panic, but rather all
-errors be recoverable by the calling application code, or in service-availability
-sensitive code which must not be susceptible to denial of service attacks,
-where a panic is pretty much not acceptable.</p>
-<h2 id="your-counter-arguments-are-about-pathological-inputs">
-  Your counter arguments are about pathological inputs
-  <a class="anchor" href="#your-counter-arguments-are-about-pathological-inputs">#</a>
+<p>The current Odin compiler compiles everything all the time. It does not currently support caching or pre-compilation of packages. Everything written in Odin can conceptually be thought of as being statically linked. As a result of this, the current Odin compiler is quite slow at compilation in my experience. It&rsquo;s worse than C and worse than carefully build-optimized C++ in some cases. This makes iteration times less than ideal.</p>
+<h2 id="personal-opinion">
+  Personal opinion
+  <a class="anchor" href="#personal-opinion">#</a>
 </h2>
-<p>It&rsquo;s been my experience that our intuition of what is and isn&rsquo;t a pathological
-or malicious input is about as accurate as time estimates. Requirements change
-and any and all attack vectors will be found and exploited. The mental burden
-of remembering the assumptions made to correctly check for pathological or
-malicious inputs in all cases and keep them updated during refactoring is far
-too enormous to successfully maintain.</p>
-<p>One of the most famous cases of this stubborn attitude is the 
-  <a href="https://www.guninski.com/where_do_you_want_billg_to_go_today_4.html">infamous qmail
-64-bit remote code execution exploit</a> which Daniel J. Bernstein denied a bounty
-for and can still be 
-  <a href="https://www.qualys.com/2020/05/19/cve-2005-1513/">exploited as of 2020</a></p>
-<p>These are:</p>
-<blockquote>
-<p>&ldquo;classical <strong>signed</strong> integer overflow, pointer with <strong>signed</strong>
-index and <strong>signedness</strong> problems&rdquo;</p>
-</blockquote>
-<p>Writes the very exploit author.</p>
-<p>The use of unsigned integer arithmetic not only prevents these bugs, it forces
-you to think about pathological and malicious inputs more directly because it
-becomes more evident.</p>
-<h2 id="the-arguments-for-unsigned">
-  The arguments for unsigned
-  <a class="anchor" href="#the-arguments-for-unsigned">#</a>
+<p>Odin is a notable improvement over C and I would encourage anyone who wants something better than C but not too far off the deep end like C++, Rust, or Zig to try it. There&rsquo;s still a lot of work to be done in the compiler to address debugging and compilation performance but that can only improve over time.</p>
+<p>Odin has various other features which I have not mentioned. There are some features I have not used or have no use for so obviously I cannot be objective about them or provide any meaningful insight into them. There are however features that I do use every day which I do so only because I have to that I do not personally like. So I want to take a moment to share my thoughts on these things.</p>
+<h3 id="packages">
+  Packages
+  <a class="anchor" href="#packages">#</a>
+</h3>
+<p>The organization of code in Odin uses a package system where a package is a directory. This eliminates an organizational tool for source files on disk since the directory introduces a new package to the language. This loss of file organization means you cannot organize code on disk with directories anymore and instead must resort to using filename suffixes or prefixes.</p>
+<h3 id="imports">
+  Imports
+  <a class="anchor" href="#imports">#</a>
+</h3>
+<p>Related to packages are that of package imports. Odin&rsquo;s import system only allows forming a singular directed acyclic graph of packages, rather than that of a strongly unambiguous graph. What this means is that in Odin, your imports must have no directed cycles and must be topologically orderable. This makes it rather impossible to share code upstream and only allows downstream importing. A 
+  <a href="https://en.wikipedia.org/wiki/Multitree">multitree</a> import system would be easier to work with in my opinion.</p>
+<h3 id="procedure-groups">
+  Procedure groups
+  <a class="anchor" href="#procedure-groups">#</a>
+</h3>
+<p>Odin has explicit procedure overloading through the use of a procedure group. This is effectively a list of procedures that is accessible under a single procedure name. It&rsquo;s basically a hand-written overload resolution-set in C++ parlance. It&rsquo;s a genuinely cool feature except the current implementation is so misbehaved that it fails to correctly select the right procedure or finds the resolution ambiguous when it actually isn&rsquo;t. The procedure group resolution system needs to be completely rewritten in my opinion.</p>
+<h2 id="final-remarks">
+  Final remarks
+  <a class="anchor" href="#final-remarks">#</a>
 </h2>
-<h3 id="most-integers-in-a-program-never-represent-negative-values">
-  Most integers in a program never represent negative values
-  <a class="anchor" href="#most-integers-in-a-program-never-represent-negative-values">#</a>
-</h3>
-<p>The use of unsigned is a good type indication of the numeric range of the
-integer, in much the same way sized integer types are too. The immediate
-ability to disregard negative quantities is one of the largest benefits to
-actually using unsigned variables. It&rsquo;s a simple observation to make that most
-values in a program never actually are negative and never can become negative,
-we should be encoding that intent and behavior within the type system for the
-added safety and benefits it provides.</p>
-<p>I cannot find a research paper I once read from Intel which claimed from their
-observations that <strong>only 3% of the integers</strong> in an entire desktop x86 Windows
-system <strong>ever represented negative values</strong>. Regardless, if that 3% figure is
-correct, then given the above opinion, I would expect to see ~97% of integer
-types in a codebase being unsigned.</p>
-<h3 id="compiler-diagnostics-are-better-for-unsigned-but-thats-worse-overall">
-  Compiler diagnostics are better for unsigned but that&rsquo;s worse overall
-  <a class="anchor" href="#compiler-diagnostics-are-better-for-unsigned-but-thats-worse-overall">#</a>
-</h3>
-<p>If safety is one of the primary motivations behind the use of signed integer
-arithmetic, yet signed integers don&rsquo;t seem to actually avoid the very bugs
-it is claimed they do, you might be wondering where the idea came from in the
-first place.</p>
-<p>If you&rsquo;ve ever <em>mixed</em> the use of signed and unsigned in a codebase you&rsquo;ll
-likely be familiar with the amount of warning diagnostics they emit. These
-diagnostics are unfortunately provided with the intent of being helpful, but
-in practice are actively malicious because they encourage silencing in the form
-of unsafe type casting.</p>
-<p>The reality is that the use of signed and unsigned paints all your integers red
-or blue, respectively. 
-  <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">What color is Your Function</a>. The more of one you use, the more likely it is
-everything will also share the same signedness regardless of if it&rsquo;s appropriate.
-Since most integers never require representing negative values, I personally
-think it&rsquo;s more appropriate to paint everything blue in this case. The exception
-is negative integer values. The rule is mostly positive integer values. The
-default of any programming language should align with the rule, rather than the
-exception.</p>
-<h3 id="checking-for-overflow-and-underflow-is-easier-and-safer">
-  Checking for overflow and underflow is easier and safer
-  <a class="anchor" href="#checking-for-overflow-and-underflow-is-easier-and-safer">#</a>
-</h3>
-<p>Since C and C++ make signed integer overflow and underflow undefined, it&rsquo;s
-almost impossible to write safe, correct, and obvious code to check for it.</p>
-<p>So simple, obvious tests like the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">if</span> (x <span style="color:#f92672">+</span> y <span style="color:#f92672">&lt;</span> x) <span style="color:#75715e">// addition overflows
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (x <span style="color:#f92672">-</span> y <span style="color:#f92672">&gt;</span> x) <span style="color:#75715e">// subtraction underflows
-</span></code></pre></div><p>Will either get compiled away, or miscompiled as it invokes undefined behavior.</p>
-<blockquote>
-<p>This is perfectly fine and safe for unsigned integers.</p>
-</blockquote>
-<blockquote>
-<p>In languages which have defined signed wrap such as Odin, this should work as well except for <code>INT_MIN</code> and <code>INT_MAX</code> as previously mentioned due to LLVM.</p>
-</blockquote>
-<p>For a fun laugh, this is the only correct way (that I know of) to detect for
-signed integer overflow and underflow in standard C or C++.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">if</span> ((b <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> a <span style="color:#f92672">&gt;</span> INT_MAX <span style="color:#f92672">-</span> b) <span style="color:#f92672">||</span> (b <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> a <span style="color:#f92672">&lt;</span> INT_MIN <span style="color:#f92672">-</span> b)) <span style="color:#75715e">// addition overflows
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ((b <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> a <span style="color:#f92672">&lt;</span> INT_MIN <span style="color:#f92672">+</span> b) <span style="color:#f92672">||</span> (b <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> a <span style="color:#f92672">&gt;</span> INT_MAX <span style="color:#f92672">+</span> b)) <span style="color:#75715e">// subtraction underflows
-</span></code></pre></div><blockquote>
-<p>Good luck remembering and typing these monstrosities when you need it.</p>
-</blockquote>
-<h3 id="your-code-will-be-simpler-and-faster">
-  Your code will be simpler and faster
-  <a class="anchor" href="#your-code-will-be-simpler-and-faster">#</a>
-</h3>
-<p>In addition to all the examples I&rsquo;ve already shown where unsigned just does the
-right thing, almost all code that uses signed integers to represent values that
-will never be negative, tends to have a cacophony of range assertions and other
-tests which are just as error-prone as bounds checking to remembering to write,
-but also maintain when refactoring. It&rsquo;s truly underappreciated how much those
-tests can be eliminated if your integer can never actually become negative due
-to the type system itself. It&rsquo;s extremely similar to not having raw pointers, in
-that you never have to check for null pointers. In many ways signed integers are
-the null pointers of integers.</p>
-<p>There are some optimizations compilers can make assuming signed integers cannot
-underflow or overflow that unsigned does not get to participate in. What is less
-known is that 
-  <a href="https://en.wikipedia.org/wiki/Value_range_analysis">value range analysis</a>
-is an optimization that can apply to any numeric type of any numeric range in
-modern 
-  <a href="https://developers.redhat.com/blog/2021/04/28/value-range-propagation-in-gcc-with-project-ranger">optimizing compilers</a>. The <code>enum</code> example from
-earlier is something where this would apply, despite that being an unsigned type.
-You can define numeric ranges as compiler hints with simple guiding branches,
-e.g: the expression <code>b = a + 2</code> immediately establishes that <code>b &gt; a</code>, which the
-compiler can use to optimize later.</p>
-<h3 id="it-actually-works">
-  It actually works
-  <a class="anchor" href="#it-actually-works">#</a>
-</h3>
-<p>You might be wondering how possible it is to actually use unsigned almost always
-as this title suggests. It&rsquo;s been my personal preference for half a decade now
-and I haven&rsquo;t actually missed signed integers since switching to it. It&rsquo;s made
-my code much easier, cleaner, and more robust contrary to popular wisdom.</p>
-<p>I would not suggest trying to use it in an existing codebase that is mostly
-signed integers, in such contexts you&rsquo;re more likely to introduce silent bugs
-and issues as a result of unsafe type casts. But consider trying it next time
-you start a new project, you might be pleasantly surprised.</p>
+<p>One year and 50k lines later I don&rsquo;t have anything other to say aside from this. I&rsquo;m sure you&rsquo;ve seen Odin mentioned before on HackerNews, Reddit and maybe even Twitter and your Discord circles. There&rsquo;s a lot of really good articles out there explaining the pros and cons of Odin and how it differs from other languages like Rust and Zig. There&rsquo;s something of a renaissance in systems languages as of recent. What I rarely see and would like to see more of is some personal case studies of actually using the language for projects. A true language begins to show it&rsquo;s faults only once you get past the honeymoon phase in my experience and there&rsquo;s few articles written about languages from this perspective. I hope this article gives a more mature and nuanced review of Odin for those looking to maybe try it.</p>
 </article>
  
       
@@ -637,29 +478,36 @@ you start a new project, you might be pleasantly surprised.</p>
       
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#the-arguments-against-unsigned">The arguments against unsigned</a>
+    <li><a href="#what-is-odin">What is Odin</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#conflict-of-interest">Conflict of interest</a>
       <ul>
-        <li><a href="#the-safety-argument">The safety argument</a></li>
-        <li><a href="#the-loop-in-reverse-argument">The loop in reverse argument</a></li>
-        <li><a href="#the-difference-of-two-numbers-can-become-negative">The difference of two numbers can become negative</a></li>
-        <li><a href="#computing-indices-with-signed-arithmetic-is-safer">Computing indices with signed arithmetic is safer</a></li>
-        <li><a href="#unsigned-multiplication-can-overflow">Unsigned multiplication can overflow</a></li>
-        <li><a href="#sentinel-values">Sentinel values</a></li>
-        <li><a href="#its-the-default">It&rsquo;s the default</a></li>
+        <li><a href="#financial-interest">Financial interest</a></li>
+        <li><a href="#relational-interest">Relational interest</a></li>
       </ul>
     </li>
-    <li><a href="#what-if-signed-was-defined-to-wrap">What if signed was defined to wrap?</a></li>
-    <li><a href="#what-about-trapping">What about trapping?</a></li>
-    <li><a href="#your-counter-arguments-are-about-pathological-inputs">Your counter arguments are about pathological inputs</a></li>
-    <li><a href="#the-arguments-for-unsigned">The arguments for unsigned</a>
+    <li><a href="#learning">Learning</a>
       <ul>
-        <li><a href="#most-integers-in-a-program-never-represent-negative-values">Most integers in a program never represent negative values</a></li>
-        <li><a href="#compiler-diagnostics-are-better-for-unsigned-but-thats-worse-overall">Compiler diagnostics are better for unsigned but that&rsquo;s worse overall</a></li>
-        <li><a href="#checking-for-overflow-and-underflow-is-easier-and-safer">Checking for overflow and underflow is easier and safer</a></li>
-        <li><a href="#your-code-will-be-simpler-and-faster">Your code will be simpler and faster</a></li>
-        <li><a href="#it-actually-works">It actually works</a></li>
+        <li><a href="#slices">Slices</a></li>
+        <li><a href="#hidden-reference-semantics">Hidden reference semantics</a></li>
+        <li><a href="#hidden-dereference-semantics">Hidden dereference semantics</a></li>
+        <li><a href="#hidden-memory-allocations">Hidden memory allocations</a></li>
+        <li><a href="#memory-allocation-confusion">Memory allocation confusion</a></li>
       </ul>
     </li>
+    <li><a href="#quality-of-life">Quality of life</a></li>
+    <li><a href="#stability">Stability</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#debugging">Debugging</a></li>
+    <li><a href="#compilation-performance">Compilation performance</a></li>
+    <li><a href="#personal-opinion">Personal opinion</a>
+      <ul>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#imports">Imports</a></li>
+        <li><a href="#procedure-groups">Procedure groups</a></li>
+      </ul>
+    </li>
+    <li><a href="#final-remarks">Final remarks</a></li>
   </ul>
 </nav>
 

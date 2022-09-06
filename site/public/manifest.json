@@ -1,14 +1,14 @@
 {
-  "name": "Almost Always Unsigned",
-  "short_name": "Almost Always Unsigned",
-  "start_url": "/aau/",
-  "scope": "/aau/",
+  "name": "Odin programming language review",
+  "short_name": "Odin programming language review",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/aau/favicon.svg",
+      "src": "/favicon.svg",
       "sizes": "512x512"
     }
   ]

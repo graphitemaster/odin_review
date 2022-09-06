@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Almost Always Unsigned</title>
-    <link>https://graphitemaster.github.io/aau/</link>
-    <description>Recent content on Almost Always Unsigned</description>
+    <title>Odin programming language review</title>
+    <link>https://graphitemaster.github.io/odin_review/</link>
+    <description>Recent content on Odin programming language review</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://graphitemaster.github.io/aau/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language><atom:link href="https://graphitemaster.github.io/odin_review/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Almost Always Unsigned</title>
-      <link>https://graphitemaster.github.io/aau/</link>
+      <title>Odin programming language review</title>
+      <link>https://graphitemaster.github.io/odin_review/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://graphitemaster.github.io/aau/</guid>
-      <description>Almost Always Unsigned #  Written by Dale Weiler
-  Twitter  GitHub  Last updated Saturday, January 1, 2022
-The need for signed integer arithmetic is often misplaced as most integers never represent negative values within a program. The indexing of arrays and iteration count of a loop reflects this concept as well. There should be a propensity to use unsigned integers more often than signed, yet despite this, most code incorrectly choses to use signed integers almost exclusively.</description>
+      <guid>https://graphitemaster.github.io/odin_review/</guid>
+      <description>A review of the Odin programming language # Written by Dale Weiler
+Twitter GitHub Last updated Monday, September 6th, 2022
+What is Odin Experience Conflict of interest Financial interest Relational interest Learning Slices Hidden reference semantics Hidden dereference semantics Hidden memory allocations Memory allocation confusion Quality of life Stability Performance Debugging Compilation performance Personal opinion Packages Imports Procedure groups Final remarks What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon.</description>
     </item>
     
   </channel>
