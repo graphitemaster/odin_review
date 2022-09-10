@@ -10,7 +10,7 @@ Written by Dale Weiler
 * [Twitter](https://twitter.com/actualGraphite)
 * [GitHub](https://github.com/graphitemaster)
 
-Last updated Tuesday, September 6th, 2022
+Last updated Tuesday, September 10th, 2022
 
 ## What is Odin
 For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C. This makes it a really attractive language for those who are unhappy with the increased complexity that other systems languages like to encourage.
@@ -101,15 +101,26 @@ The immediate benefit to using Odin over C and C++ is that it provides a bunch o
 
 * Discriminated unions
 
-    Cannot tell you how frustrating it is that C++'s idea of a sum type is a library provided `std::variant`. A union of a single type is an optional type called a `Maybe`.
+    Cannot tell you how frustrating it is that C++'s idea of a sum type is a library provided `std::variant`. Odin has proper `union` type and a union of a single type is recognized by the language as an optional type. The standard library provides a simple `Maybe` wrapper with
+    ```odin
+    Maybe :: union($T: typeid) { T }
+    ```
 
 * `defer`
 
-    Declarative control flow that obviates the need for RAII.
+    Declarative control flow that obviates the need for RAII. Some obvious examples where this is so much nicer than wrapper types with destructors include:
+    ```odin
+    defer free(ptr);
+    defer unlock(mutex);
+    defer close(file);
+    defer if !ok undo(); // predicated defer
+    ```
 
 * `or_return` and `or_else`.
 
     These are hard to explain. Check out [The Value Propagation Experiment](https://www.gingerbill.org/article/2021/09/06/value-propagation-experiment-part-2/)
+
+    Suffice to say most of my code handles errors with `or_return` and multiple returns these days. It's genuinely efficient too.
 
 * Foreign function interface
 
@@ -134,7 +145,12 @@ When I first started writing Odin I found the compiler would crash often. After 
 The danger of using new languages is not having all the years of bug fixes and improvements applied to them. The Odin compiler has been quite good at being correct with code correctness from a compilation stand point. During my year using it I had only run into a single logical miscompilation bug caused by a `defer` statement which wasn't being executed when the procedure returned. Thankfully this bug was fixed the same day I reported it and I didn't lose much time tracking it down.
 
 ### The bug that almost killed me
-If that was the the only correctness issue I ran into this wouldn't necessitate having an entire header in this review for correctness though. There was one other correctness issue within the standard library that almost killed me. To give some context to the issue, we have a reactor system (a multi-threaded event loop) I had written for performing blocking IO operations and asset decompression / deserialization on without stalling the main thread which we were experiencing strange memory corruption issues on. I suspected this was caused by your standard data-race by a misuse of synchronization primitives. There was some red-herring robustness issues with locks I noticed early on that shouldn't've mattered but because I couldn't figure out what the issue was I rewrote the event loop model a few times, reducing some lock contention and improving robustness in the process and the issue went away for me on Linux completely. This suggested that there was a data-race in the reactor which I later confirmed was the case but didn't know at the time. What was more concerning was that heap corruption was still happening on Windows. This is where I went down the wrong road of assuming that the reactor had data races and I spent the next two weeks replacing all the locking primitives with ones in libc (made possible because Odin has a full projection of the C standard library in `core:c/libc`) and painstakingly testing every possible code path in `helgrind` (since it can track libc primitives). It reported nothing. I even hand drew a time-line graph with order-before and order-after relationship of all locks and I concluded that the reactor was correct. I ignored this issue at this point since it was consuming up all my time and making me lose sleep at night, I focused my efforts on other important matters, after all the issue wasn't happening for me on Linux at all, it was exclusively a Windows problem.
+If that was the the only correctness issue I ran into this wouldn't necessitate having an entire header in this review for correctness though. There was one other correctness issue within the standard library that almost killed me.
+
+#### Disclaimer
+The bug I'm about mention here is a simple mistake anyone could've made and is not reflective of Odin as a language at all. What I particularly enjoy about this bug is that even in a memory safe language with "fearless concurrency" like Rust it still would've been as painful. This is one of the reasons I don't buy into the rhetoric that memory safety solves everything.
+
+To give some context to the issue, we have a reactor system (a multi-threaded event loop) I had written for performing blocking IO operations and asset decompression / deserialization on without stalling the main thread which we were experiencing strange memory corruption issues on. I suspected this was caused by your standard data-race by a misuse of synchronization primitives. There was some red-herring robustness issues with locks I noticed early on that shouldn't've mattered but because I couldn't figure out what the issue was I rewrote the event loop model a few times, reducing some lock contention and improving robustness in the process and the issue went away for me on Linux completely. This suggested that there was a data-race in the reactor which I later confirmed was the case but didn't know at the time. What was more concerning was that heap corruption was still happening on Windows. This is where I went down the wrong road of assuming that the reactor had data races and I spent the next two weeks replacing all the locking primitives with ones in libc (made possible because Odin has a full projection of the C standard library in `core:c/libc`) and painstakingly testing every possible code path in `helgrind` (since it can track libc primitives). It reported nothing. I even hand drew a time-line graph with order-before and order-after relationship of all locks and I concluded that the reactor was correct. I ignored this issue at this point since it was consuming up all my time and making me lose sleep at night, I focused my efforts on other important matters, after all the issue wasn't happening for me on Linux at all, it was exclusively a Windows problem.
 
 I'm the only person at JangaFX as of current who develops on Linux so this wasn't a sound strategy because the week after a coworker starts hitting the problem on Windows leading us to look into it again. This time with a refreshed mind and the confidence it wasn't an issue in my code I suspected the Odin standard library. The way synchronization primitives are implemented on Linux are through the use of the `futex` system call and we already knew that Linux worked. I had assumed that Windows primitives would've used `WaitOnAddress` and `WakeOnAddress` which is similar to `futex` but to my surprise Odin implements the `Mutex` primitive with [Slim Reader/Writer Locks (SRW)](https://docs.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks) on Windows.
 
@@ -154,14 +170,14 @@ _mutex_try_lock :: proc(m: ^Mutex) -> bool {
 }
 ```
 
-I thought long and hard about how this could possibly fail. Looking back at the reactor code the only way memory corruption could occur is if `mutex_try_lock` succeeded without actually locking the mutex.
+I thought quite a bit about how this could possibly fail. Looking back at the reactor code the only way memory corruption could occur is if `mutex_try_lock` succeeded without actually locking the mutex.
 
 Looking at the Windows package which declares the `TryAcquireSRWLockExclusive` procedure we saw the following.
 ```odin
 TryAcquireSRWLockExclusive :: proc(SRWLock: ^SRWLOCK) -> BOOL
 ```
 
-This looked perfectly reasonably, until a corworker looked at the [MSDN page](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-tryacquiresrwlockexclusive) for it.
+This looked perfectly reasonable, until a corworker looked at the [MSDN page](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-tryacquiresrwlockexclusive) for it.
 ```c
 BOOLEAN TryAcquireSRWLockExclusive(
   [in, out] PSRWLOCK SRWLock
@@ -185,6 +201,8 @@ While being a systems programming language, Odin's performance characteristics a
     * It lacks strict-aliasing optimizations as they're incompatible with the language. This is similar to MSVC which doesn't have them either in C or C++ as Windows depends on this behavior, as does the Linux kernel which disables them in gcc with `-fno-strict-aliasing`. The performance characteristics of this in general vary depending on how your code is written. Systems programmers appear to be divided on the benefit of these.
 
     * It lacks poison-value based optimizations. Overflowing a signed integer (in C or C++) or operating on a null pointer, etc. The type of values these produce are "undefined" in those languages, when depending on them, or operating on them, these values are considered "poisoned". Compilers of most systems languages optimize on the assumption you do not operate on this "undefined behavior". Odin does not have undefined behavior and so these optimizations cannot be applied. In my experience these optimizations rarely provide any significant performance improvement but some sources I've read cite ~3% improvements in some cases.
+
+    * Odin's calling convention has some addition overhead. Odin has it's own internal calling convention for procedures where it passes an implicit context pointer as the last argument to the procedure implicitly. This wastes a register in the calling ABI which could be used by the register allocator of the code generation for the procedure as the context needs to be preserved to pass to other procedures called in the body of that procedure. This additional parameter coupled with the fact Odin implicitly chooses when to pass by reference or pass by copy means there is something additional loads and stores that wouldn't occur in C or C++. Odin has `"contextless"` procedures which save this register.
 
     * Odin lacks global value numbering optimizations, only allowing very basic lexically equivalent common subexpressions to be eliminated and similar local value number optimizations. There are allegedly areas in the language where this would break things but I haven't been able to validate that so this may just be an overly conservative decision of the compiler or a bug in LLVM (which Odin uses for its code generation), being avoided.
 

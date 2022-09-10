@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A review of the Odin programming language # Written by Dale Weiler
-Twitter GitHub Last updated Tuesday, September 6th, 2022
+Twitter GitHub Last updated Tuesday, September 10th, 2022
 What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Odin programming language review" />
 <meta property="og:description" content="A review of the Odin programming language # Written by Dale Weiler
-Twitter GitHub Last updated Tuesday, September 6th, 2022
+Twitter GitHub Last updated Tuesday, September 10th, 2022
 What is Odin # For those unfamiliar, Odin is a systems programming language that is more conservative in its design than other newer programming languages such as Rust, Zig, and Carbon. The design ideology around Odin is to provide some greatly needed quality of life improvements over the lingua-franca of systems languages: C, while still staying as simple as C." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://graphitemaster.github.io/odin_review/" /><meta property="article:section" content="" />
@@ -158,7 +158,7 @@ https://github.com/alex-shpak/hugo-book
 <li>
   <a href="https://github.com/graphitemaster">GitHub</a></li>
 </ul>
-<p>Last updated Tuesday, September 6th, 2022</p>
+<p>Last updated Tuesday, September 10th, 2022</p>
 <h2 id="what-is-odin">
   What is Odin
   <a class="anchor" href="#what-is-odin">#</a>
@@ -276,16 +276,22 @@ https://github.com/alex-shpak/hugo-book
 </li>
 <li>
 <p>Discriminated unions</p>
-<p>Cannot tell you how frustrating it is that C++&rsquo;s idea of a sum type is a library provided <code>std::variant</code>. A union of a single type is an optional type called a <code>Maybe</code>.</p>
-</li>
+<p>Cannot tell you how frustrating it is that C++&rsquo;s idea of a sum type is a library provided <code>std::variant</code>. Odin has proper <code>union</code> type and a union of a single type is recognized by the language as an optional type. The standard library provides a simple <code>Maybe</code> wrapper with</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">Maybe :: union($T: typeid) { T }
+</code></pre></li>
 <li>
 <p><code>defer</code></p>
-<p>Declarative control flow that obviates the need for RAII.</p>
-</li>
+<p>Declarative control flow that obviates the need for RAII. Some obvious examples where this is so much nicer than wrapper types with destructors include:</p>
+<pre tabindex="0"><code class="language-odin" data-lang="odin">defer free(ptr);
+defer unlock(mutex);
+defer close(file);
+defer if !ok undo(); // predicated defer
+</code></pre></li>
 <li>
 <p><code>or_return</code> and <code>or_else</code>.</p>
 <p>These are hard to explain. Check out 
   <a href="https://www.gingerbill.org/article/2021/09/06/value-propagation-experiment-part-2/">The Value Propagation Experiment</a></p>
+<p>Suffice to say most of my code handles errors with <code>or_return</code> and multiple returns these days. It&rsquo;s genuinely efficient too.</p>
 </li>
 <li>
 <p>Foreign function interface</p>
@@ -318,7 +324,13 @@ https://github.com/alex-shpak/hugo-book
   The bug that almost killed me
   <a class="anchor" href="#the-bug-that-almost-killed-me">#</a>
 </h3>
-<p>If that was the the only correctness issue I ran into this wouldn&rsquo;t necessitate having an entire header in this review for correctness though. There was one other correctness issue within the standard library that almost killed me. To give some context to the issue, we have a reactor system (a multi-threaded event loop) I had written for performing blocking IO operations and asset decompression / deserialization on without stalling the main thread which we were experiencing strange memory corruption issues on. I suspected this was caused by your standard data-race by a misuse of synchronization primitives. There was some red-herring robustness issues with locks I noticed early on that shouldn&rsquo;t&rsquo;ve mattered but because I couldn&rsquo;t figure out what the issue was I rewrote the event loop model a few times, reducing some lock contention and improving robustness in the process and the issue went away for me on Linux completely. This suggested that there was a data-race in the reactor which I later confirmed was the case but didn&rsquo;t know at the time. What was more concerning was that heap corruption was still happening on Windows. This is where I went down the wrong road of assuming that the reactor had data races and I spent the next two weeks replacing all the locking primitives with ones in libc (made possible because Odin has a full projection of the C standard library in <code>core:c/libc</code>) and painstakingly testing every possible code path in <code>helgrind</code> (since it can track libc primitives). It reported nothing. I even hand drew a time-line graph with order-before and order-after relationship of all locks and I concluded that the reactor was correct. I ignored this issue at this point since it was consuming up all my time and making me lose sleep at night, I focused my efforts on other important matters, after all the issue wasn&rsquo;t happening for me on Linux at all, it was exclusively a Windows problem.</p>
+<p>If that was the the only correctness issue I ran into this wouldn&rsquo;t necessitate having an entire header in this review for correctness though. There was one other correctness issue within the standard library that almost killed me.</p>
+<h4 id="disclaimer">
+  Disclaimer
+  <a class="anchor" href="#disclaimer">#</a>
+</h4>
+<p>The bug I&rsquo;m about mention here is a simple mistake anyone could&rsquo;ve made and is not reflective of Odin as a language at all. What I particularly enjoy about this bug is that even in a memory safe language with &ldquo;fearless concurrency&rdquo; like Rust it still would&rsquo;ve been as painful. This is one of the reasons I don&rsquo;t buy into the rhetoric that memory safety solves everything.</p>
+<p>To give some context to the issue, we have a reactor system (a multi-threaded event loop) I had written for performing blocking IO operations and asset decompression / deserialization on without stalling the main thread which we were experiencing strange memory corruption issues on. I suspected this was caused by your standard data-race by a misuse of synchronization primitives. There was some red-herring robustness issues with locks I noticed early on that shouldn&rsquo;t&rsquo;ve mattered but because I couldn&rsquo;t figure out what the issue was I rewrote the event loop model a few times, reducing some lock contention and improving robustness in the process and the issue went away for me on Linux completely. This suggested that there was a data-race in the reactor which I later confirmed was the case but didn&rsquo;t know at the time. What was more concerning was that heap corruption was still happening on Windows. This is where I went down the wrong road of assuming that the reactor had data races and I spent the next two weeks replacing all the locking primitives with ones in libc (made possible because Odin has a full projection of the C standard library in <code>core:c/libc</code>) and painstakingly testing every possible code path in <code>helgrind</code> (since it can track libc primitives). It reported nothing. I even hand drew a time-line graph with order-before and order-after relationship of all locks and I concluded that the reactor was correct. I ignored this issue at this point since it was consuming up all my time and making me lose sleep at night, I focused my efforts on other important matters, after all the issue wasn&rsquo;t happening for me on Linux at all, it was exclusively a Windows problem.</p>
 <p>I&rsquo;m the only person at JangaFX as of current who develops on Linux so this wasn&rsquo;t a sound strategy because the week after a coworker starts hitting the problem on Windows leading us to look into it again. This time with a refreshed mind and the confidence it wasn&rsquo;t an issue in my code I suspected the Odin standard library. The way synchronization primitives are implemented on Linux are through the use of the <code>futex</code> system call and we already knew that Linux worked. I had assumed that Windows primitives would&rsquo;ve used <code>WaitOnAddress</code> and <code>WakeOnAddress</code> which is similar to <code>futex</code> but to my surprise Odin implements the <code>Mutex</code> primitive with 
   <a href="https://docs.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks">Slim Reader/Writer Locks (SRW)</a> on Windows.</p>
 <p>These are impossible to get wrong and looked perfectly correct, here&rsquo;s the full implementation.</p>
@@ -334,10 +346,10 @@ _mutex_unlock :: proc(m: ^Mutex) {
 _mutex_try_lock :: proc(m: ^Mutex) -&gt; bool {
 	return bool(win32.TryAcquireSRWLockExclusive(&amp;m.impl.srwlock))
 }
-</code></pre><p>I thought long and hard about how this could possibly fail. Looking back at the reactor code the only way memory corruption could occur is if <code>mutex_try_lock</code> succeeded without actually locking the mutex.</p>
+</code></pre><p>I thought quite a bit about how this could possibly fail. Looking back at the reactor code the only way memory corruption could occur is if <code>mutex_try_lock</code> succeeded without actually locking the mutex.</p>
 <p>Looking at the Windows package which declares the <code>TryAcquireSRWLockExclusive</code> procedure we saw the following.</p>
 <pre tabindex="0"><code class="language-odin" data-lang="odin">TryAcquireSRWLockExclusive :: proc(SRWLock: ^SRWLOCK) -&gt; BOOL
-</code></pre><p>This looked perfectly reasonably, until a corworker looked at the 
+</code></pre><p>This looked perfectly reasonable, until a corworker looked at the 
   <a href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-tryacquiresrwlockexclusive">MSDN page</a> for it.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>BOOLEAN <span style="color:#a6e22e">TryAcquireSRWLockExclusive</span>(
 </span></span><span style="display:flex;"><span>  [in, out] PSRWLOCK SRWLock
@@ -362,6 +374,9 @@ _mutex_try_lock :: proc(m: ^Mutex) -&gt; bool {
 </li>
 <li>
 <p>It lacks poison-value based optimizations. Overflowing a signed integer (in C or C++) or operating on a null pointer, etc. The type of values these produce are &ldquo;undefined&rdquo; in those languages, when depending on them, or operating on them, these values are considered &ldquo;poisoned&rdquo;. Compilers of most systems languages optimize on the assumption you do not operate on this &ldquo;undefined behavior&rdquo;. Odin does not have undefined behavior and so these optimizations cannot be applied. In my experience these optimizations rarely provide any significant performance improvement but some sources I&rsquo;ve read cite ~3% improvements in some cases.</p>
+</li>
+<li>
+<p>Odin&rsquo;s calling convention has some addition overhead. Odin has it&rsquo;s own internal calling convention for procedures where it passes an implicit context pointer as the last argument to the procedure implicitly. This wastes a register in the calling ABI which could be used by the register allocator of the code generation for the procedure as the context needs to be preserved to pass to other procedures called in the body of that procedure. This additional parameter coupled with the fact Odin implicitly chooses when to pass by reference or pass by copy means there is something additional loads and stores that wouldn&rsquo;t occur in C or C++. Odin has <code>&quot;contextless&quot;</code> procedures which save this register.</p>
 </li>
 <li>
 <p>Odin lacks global value numbering optimizations, only allowing very basic lexically equivalent common subexpressions to be eliminated and similar local value number optimizations. There are allegedly areas in the language where this would break things but I haven&rsquo;t been able to validate that so this may just be an overly conservative decision of the compiler or a bug in LLVM (which Odin uses for its code generation), being avoided.</p>
